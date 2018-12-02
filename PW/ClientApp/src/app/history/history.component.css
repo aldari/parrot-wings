@@ -1,0 +1,18 @@
+.transaction-list {
+    margin: 0 auto;
+}
+
+.spinner-container {
+    height: 360px;
+    width: 390px;
+    position: fixed;
+}
+
+.transaction-table {
+    min-height: 360px;
+    margin-top: 10px;
+}
+
+.spinner-container mat-spinner {
+    margin: 130px auto 0 auto;
+}

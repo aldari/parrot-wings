@@ -1,0 +1,63 @@
+<div class=background>	
+<div class="signup-page"> 
+<div class="signup-box">
+    <div class="logo">
+        <a>Parrot Wings</a>
+    </div>
+    <div class="card">
+        <div class="body">
+            <form (ngSubmit)="register()" [formGroup]="registrationForm" #registerForm="ngForm" novalidate>
+                <mat-form-field>
+                    <mat-icon matPrefix>person</mat-icon>
+                    <input matInput type="text" formControlName="fullName" placeholder=" Full Name" autocomplete="fullname">
+                    <mat-error *ngIf="registrationForm.get('fullName').hasError('required')">
+                        Full Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-icon matPrefix>email</mat-icon>
+                    <input matInput type="email" formControlName="email" placeholder=" Email" autocomplete="fullname">
+                    <mat-error *ngIf="registrationForm.get('email').hasError('required')">
+                        Email is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="registrationForm.get('email').hasError('email')">
+                        Email is wrong
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-icon matPrefix>lock</mat-icon>
+                    <input matInput type="password" formControlName="password" placeholder=" Password" autocomplete="off">
+                    <mat-error *ngIf="registrationForm.get('password').hasError('required')">
+                        Password is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-icon matPrefix>lock</mat-icon>
+                    <input matInput type="password" formControlName="passwordConfirm" placeholder=" Confirm Password" autocomplete="off">
+                    <mat-error *ngIf="registrationForm.get('passwordConfirm').hasError('required')">
+                        Password Confirmation is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="registrationForm.errors?.mismatch">
+                        Password Confirmation does not match Password
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="error">{{errMsg}}</div>
+
+                <div class="col-xs-4 col-xs-offset-8 p-t-5">
+                    <button mat-raised-button color="primary" type="submit">Register</button>
+                </div>
+
+                <div class="m-t-25 m-b-5">
+                    Have account? <a routerLink="/login"> Login</a>
+                </div>
+            </form>
+            <div *ngIf="loaderFlag" class="load-container load3"><div class="loaderbg"><div class="loader">Loading...</div></div></div>
+        </div>
+    </div>
+</div>
+</div>
+</div>

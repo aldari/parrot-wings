@@ -1,0 +1,39 @@
+<div class="row clearfix">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h1>Adding Transaction</h1>
+    <div class="card">
+      <div class="body">
+        <form novalidate [formGroup]="transactionForm" (ngSubmit)="save()">
+          <mat-form-field>
+            <input matInput type="text" formControlName="amount" placeholder="Amount" form>
+            <mat-error *ngIf="transactionForm.get('amount').hasError('required')">
+              Amount is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="transactionForm.get('amount').hasError('min')">
+              Enter Amount greater then 0
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput type="text" formControlName="recipient" placeholder="Recipient" [matAutocomplete]="auto" >
+            <mat-error *ngIf="transactionForm.hasError('forceOptionValidator', ['recipient'])">
+              Select a recipient
+            </mat-error>
+          </mat-form-field>
+
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let recipient of (filteredData$ | async)" [value]="recipient">
+              {{ recipient.name }}
+            </mat-option>
+          </mat-autocomplete>
+
+          <div class="error">{{errMsg}}</div>
+
+          <div class="m-t-10">
+            <spinner-button [options]="spinnerButtonOptions" (onClick)="save()"></spinner-button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

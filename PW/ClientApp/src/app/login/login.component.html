@@ -1,0 +1,48 @@
+<div class=background>	
+<div class="login-page"> 
+    <div class="login-box">
+        <div class="logo">
+            <a routerLink="/">Parrot Wings</a>
+        </div>
+        <div class="card">
+            <div class="body">
+                <form id="sign_in" (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm" novalidate>
+                    <div class="msg"></div>
+
+                    <mat-form-field>
+                        <mat-icon matPrefix>person</mat-icon>
+                        <input matInput type="email" name="email" placeholder="Email" required ngModel #loginUsername="ngModel">
+                        <mat-error *ngIf="!loginUsername.valid && loginUsername.touched">
+                            Email is required
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-icon matPrefix>lock</mat-icon>
+                        <input matInput type="password" name="password" placeholder="Password" required ngModel #loginPassword="ngModel">
+                        <mat-error *ngIf="!loginPassword.valid && loginPassword.touched">
+                            Password is required
+                        </mat-error>
+                    </mat-form-field>
+
+                    <div class="row">
+                        <div class="col-xs-4 col-xs-offset-8 p-t-5">
+                            <button mat-raised-button color="primary" type="submit">Login</button>
+                        </div>
+                        <div class="col-xs-12">
+                            <label *ngIf="loginError" class="error" for="textField">Неверный пароль. Повторите попытку.</label>
+                        </div>
+                    </div>
+                    <div class="row m-t-15 m-b-20">
+                        <div class="col-xs-12">
+                            <div>
+                                <small>New here? </small><a [routerLink]="['/register']" class="signup">Sign up now.</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+</div>
+</div>

@@ -1,0 +1,46 @@
+<div class="transaction-list">
+
+  <h1>Last 10 Transactions</h1>
+  <div class="spinner-container" *ngIf="dataSource.loading$ | async">
+      <mat-spinner></mat-spinner>
+  </div>
+
+    <mat-table class="transactions-table mat-elevation-z8" [dataSource]="dataSource">
+
+    <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+        <mat-cell *matCellDef="let transaction">{{transaction.id}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="transactionDate">
+        <mat-header-cell *matHeaderCellDef>Date/Time of the transaction</mat-header-cell>
+        <mat-cell class="duration-cell"
+                *matCellDef="let transaction">{{transaction.transactionDate | date:'medium':undefined:'en-US' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="accountId">
+        <mat-header-cell *matHeaderCellDef>Correspondent Name</mat-header-cell>
+        <mat-cell class="description-cell" *matCellDef="let transaction">{{transaction.accountName}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef>Transaction amount</mat-header-cell>
+        <mat-cell *matCellDef="let transaction">{{transaction.amount}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="accumulateSum">
+        <mat-header-cell *matHeaderCellDef>Resulting balance</mat-header-cell>
+        <mat-cell *matCellDef="let transaction">{{transaction.accumulateSum}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="repeatTransaction">
+        <mat-header-cell *matHeaderCellDef>Repeat Transaction</mat-header-cell>
+        <mat-cell *matCellDef="let transaction"><button mat-raised-button color="primary" *ngIf="transaction.amount<0">Repeat</button></mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+    </mat-table>
+</div>
