@@ -1,15 +1,13 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
-import { AuthGuard } from './auth-guard.service';
-import { HistoryComponent } from './history/history.component';
-import { TransactionComponent } from './transaction/transaction.component';
-import { LastTransactionComponent } from './last-transaction/last-transaction.component';
-import { TestComponent } from './test/test.component';
+import { TransactionComponent } from './modules/transaction/pages/transaction/transaction.component';
+import { LastTransactionComponent } from './modules/transaction/pages/last-transaction/last-transaction.component';
+import { HistoryComponent } from './modules/transaction/pages/history/history.component';
+import { TestComponent } from './modules/transaction/pages/test/test.component';
+import { AuthGuard } from './modules/shared/guards/auth-guard.service';
 
 const appRoutes: Routes = [
     {
@@ -22,8 +20,6 @@ const appRoutes: Routes = [
             { path: 'test', component: TestComponent }
         ]
     },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
     {
         path: '**',
         component: PageNotFoundComponent

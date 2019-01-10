@@ -1,10 +1,9 @@
-import { throwError as observableThrowError, Observable } from 'rxjs';
+import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
-import { environment } from '../../environments/environment';
-import { Transaction } from '../transaction/transaction.model';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable()
 export class LastTransactionService {

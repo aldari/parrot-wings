@@ -6,21 +6,21 @@
         </div>
         <div class="card">
             <div class="body">
-                <form id="sign_in" (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm" novalidate>
+                <form id="sign_in" (ngSubmit)="login()" [formGroup]="signinForm" novalidate>
                     <div class="msg"></div>
 
                     <mat-form-field>
                         <mat-icon matPrefix>person</mat-icon>
-                        <input matInput type="email" name="email" placeholder="Email" required ngModel #loginUsername="ngModel">
-                        <mat-error *ngIf="!loginUsername.valid && loginUsername.touched">
+                        <input matInput type="email" formControlName="email" placeholder="Email">
+                        <mat-error *ngIf="signinForm.get('fullName')?.hasError('required')">
                             Email is required
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field>
                         <mat-icon matPrefix>lock</mat-icon>
-                        <input matInput type="password" name="password" placeholder="Password" required ngModel #loginPassword="ngModel">
-                        <mat-error *ngIf="!loginPassword.valid && loginPassword.touched">
+                        <input matInput type="password" formControlName="password" placeholder="Password">
+                        <mat-error *ngIf="signinForm.get('fullName')?.hasError('required')">
                             Password is required
                         </mat-error>
                     </mat-form-field>
@@ -30,7 +30,7 @@
                             <button mat-raised-button color="primary" type="submit">Login</button>
                         </div>
                         <div class="col-xs-12">
-                            <label *ngIf="loginError" class="error" for="textField">Неверный пароль. Повторите попытку.</label>
+                            <label *ngIf="loginError" class="error" for="textField">Invalid password. Try again</label>
                         </div>
                     </div>
                     <div class="row m-t-15 m-b-20">

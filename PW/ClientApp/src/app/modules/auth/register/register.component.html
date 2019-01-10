@@ -6,7 +6,7 @@
     </div>
     <div class="card">
         <div class="body">
-            <form (ngSubmit)="register()" [formGroup]="registrationForm" #registerForm="ngForm" novalidate>
+            <form (ngSubmit)="register()" [formGroup]="registrationForm" novalidate>
                 <mat-form-field>
                     <mat-icon matPrefix>person</mat-icon>
                     <input matInput type="text" formControlName="fullName" placeholder=" Full Name" autocomplete="fullname">
@@ -40,9 +40,9 @@
                     <mat-error *ngIf="registrationForm.get('passwordConfirm').hasError('required')">
                         Password Confirmation is <strong>required</strong>
                     </mat-error>
-                    <mat-error *ngIf="registrationForm.errors?.mismatch">
+                    <!-- <mat-error *ngIf="registrationForm.errors?.mismatch">
                         Password Confirmation does not match Password
-                    </mat-error>
+                    </mat-error> -->
                 </mat-form-field>
 
                 <div class="error">{{errMsg}}</div>

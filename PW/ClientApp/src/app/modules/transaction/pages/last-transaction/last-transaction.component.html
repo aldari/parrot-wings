@@ -15,7 +15,7 @@
     <ng-container matColumnDef="transactionDate">
         <mat-header-cell *matHeaderCellDef>Date/Time of the transaction</mat-header-cell>
         <mat-cell class="duration-cell"
-                *matCellDef="let transaction">{{transaction.transactionDate | date:'medium':undefined:'en-US' }}</mat-cell>
+                *matCellDef="let transaction">{{transaction.transactionDate | date:'medium' }}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="accountId">

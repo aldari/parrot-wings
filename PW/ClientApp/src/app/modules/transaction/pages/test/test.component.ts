@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-test',

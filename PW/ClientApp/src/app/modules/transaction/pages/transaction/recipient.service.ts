@@ -3,7 +3,7 @@ import { catchError } from 'rxjs/operators';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable()
 export class RecipientService {

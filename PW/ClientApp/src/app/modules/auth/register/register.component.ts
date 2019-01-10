@@ -2,9 +2,9 @@ import { FormBuilder, FormGroup, Validators, FormGroupDirective, ValidatorFn } f
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { UserService } from '../users/services/user.service';
-import { User } from '../users/model/user.model';
-import { CustomValidators, ConfirmValidParentMatcher } from '../shared/valid';
+import { UserService } from './user.service';
+import { User } from './user.model';
+import { CustomValidators } from '../../../shared/valid';
 
 @Component({
     selector: 'app-register',
@@ -47,7 +47,8 @@ export class RegisterComponent implements OnInit {
             () => {
                 this.loaderFlag = false;
                 this.snackBar.open('User has registered');
-                this.registerForm.resetForm();
+                //this.registerForm.resetForm();
+                this.registerForm.reset(this.registerForm.value);
             },
             (error) => {
                 this.loaderFlag = false;

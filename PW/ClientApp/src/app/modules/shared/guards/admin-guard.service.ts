@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import * as JWT from 'jwt-decode';
 
-import { AuthService } from './auth.service';
+import { AuthService } from '../../../auth.service';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
