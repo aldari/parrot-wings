@@ -1,7 +1,6 @@
-﻿using PW.Core.Account.Domain;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace PW.Core.Account.Dto
+namespace PW.Application.Accounts.Queries.GetAccountTransactions
 {
     public class FilteredTransactionListDto
     {

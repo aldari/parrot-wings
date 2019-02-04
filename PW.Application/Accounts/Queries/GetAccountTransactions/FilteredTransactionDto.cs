@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace PW.Core.Account.Dto
+namespace PW.Application.Accounts.Queries.GetAccountTransactions
 {
     public class FilteredTransactionDto
     {

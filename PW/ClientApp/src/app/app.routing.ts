@@ -1,8 +1,8 @@
-import { ModuleWithProviders } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { PageNotFoundComponent } from './modules/core/pages/page-not-found/page-not-found.component';
+import { AdminLayoutComponent } from './modules/core/pages/admin-layout/admin-layout.component';
 import { TransactionComponent } from './modules/transaction/pages/transaction/transaction.component';
 import { LastTransactionComponent } from './modules/transaction/pages/last-transaction/last-transaction.component';
 import { HistoryComponent } from './modules/transaction/pages/history/history.component';
@@ -26,6 +26,8 @@ const appRoutes: Routes = [
     }
 ];
 
-export const AppRoutingProviders: any[] = [];
-
-export const AppRouting: ModuleWithProviders = RouterModule.forRoot(appRoutes);
+@NgModule({
+    imports: [ RouterModule.forRoot(appRoutes, { preloadingStrategy: PreloadAllModules }) ],
+    exports: [ RouterModule ]
+})
+export class AppRoutingModule {}

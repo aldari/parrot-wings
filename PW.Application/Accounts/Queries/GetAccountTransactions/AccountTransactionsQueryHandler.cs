@@ -1,23 +1,28 @@
-﻿using PW.Core.Account.Domain;
-using PW.Core.Account.Dto;
-using PW.Core.Account.Query;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using PW.Core.Account.Domain;
 using PW.DataAccess.ApplicationData;
-using PW.DataAccess.Cqs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace PW.DataAccess.Account.Query
+namespace PW.Application.Accounts.Queries.GetAccountTransactions
 {
-    public class GetFilteredAccountTransactionsQuery : EfQueryBase<ApplicationDbContext>, IGetFilteredAccountTransactionsQuery
+    public class AccountTransactionsQueryHandler : IRequestHandler<AccountTransactionsQuery, FilteredTransactionListDto>
     {
-        public GetFilteredAccountTransactionsQuery(ApplicationDbContext context)
-            : base(context)
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public AccountTransactionsQueryHandler(ApplicationDbContext context, IMapper mapper)
         {
+            _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<FilteredTransactionListDto> Execute(string sortColumn, string sortOrder, Guid accountId, int pageIndex, int pageSize, int? amount, DateTime? fromTransactionDate, DateTime? toTransactionDate, Guid correspondent)
+        public async Task<FilteredTransactionListDto> Handle(AccountTransactionsQuery request, CancellationToken cancellationToken)
         {
             var searchFieldMutators = new List<SearchFieldMutator<AccountTransaction, TransactionSearchViewModel>>
             {
@@ -85,44 +90,45 @@ namespace PW.DataAccess.Account.Query
                 new SearchFieldMutator<FilteredTransactionDto, TransactionSearchViewModel>(
                     //search => search.SortColumn != "correspondent",
                     search => true,
-                    (transactions, search) => transactions.Skip(pageIndex * pageSize).Take(pageSize))
+                    (transactions, search) => transactions.Skip(request.PageIndex * request.PageSize).Take(request.PageSize))
             };
 
             var searchModel = new TransactionSearchViewModel
             {
-                ClientId = accountId,
-                Correspondent = correspondent,
-                Amount = amount,
-                From = fromTransactionDate,
-                To = toTransactionDate,
-                SortColumn = sortColumn,
-                SortOrder = sortOrder
+                ClientId = request.AccountId,
+                Correspondent = request.Correspondent,
+                Amount = request.Amount,
+                From = request.From,
+                To = request.To,
+                SortColumn = request.SortColumn,
+                SortOrder = request.SortOrder
             };
 
             // apply filters and sort
-            var transactionsQuery = DbContext.AccountTransactions.AsQueryable();
+            var transactionsQuery = _context.AccountTransactions.AsQueryable();
             foreach (var searchFieldMutator in searchFieldMutators)
                 transactionsQuery = searchFieldMutator.Apply(searchModel, transactionsQuery);
 
             // remember count for paginator after filtering
-            var count = transactionsQuery.Count();
+            var count = await transactionsQuery.CountAsync();
             // add correspondent name to dto
             var transactionsDtoQuery = from t in transactionsQuery
-                join acc in DbContext.Accounts on t.CreditAccountId == accountId ? t.DebitAccountId : t.CreditAccountId
-                equals acc.Id select new FilteredTransactionDto
-                {
-                    Amount = t.Amount,
-                    TransactionDate = t.TransactionDate,
-                    CorrespondentId = (t.CreditAccountId == accountId) ? t.DebitAccountId : t.CreditAccountId,
-                    IsCredit = t.DebitAccountId == accountId,
-                    Correspondent = acc.Name
-                };
+                                       join acc in _context.Accounts on t.CreditAccountId == request.AccountId ? t.DebitAccountId : t.CreditAccountId
+                                       equals acc.Id
+                                       select new FilteredTransactionDto
+                                       {
+                                           Amount = t.Amount,
+                                           TransactionDate = t.TransactionDate,
+                                           CorrespondentId = (t.CreditAccountId == request.AccountId) ? t.DebitAccountId : t.CreditAccountId,
+                                           IsCredit = t.DebitAccountId == request.AccountId,
+                                           Correspondent = acc.Name
+                                       };
 
             // add correspondent sorting and paging
             foreach (var searchFieldMutator in searchFieldMutators2)
                 transactionsDtoQuery = searchFieldMutator.Apply(searchModel, transactionsDtoQuery);
 
-            return new FilteredTransactionListDto { Count = count, Transactions = transactionsDtoQuery.ToList() };
+            return new FilteredTransactionListDto { Count = count, Transactions = await transactionsDtoQuery.ToListAsync() };
         }
     }
 }

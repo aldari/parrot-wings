@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
-import { merge, Observable, EMPTY } from 'rxjs';
-import { tap, startWith, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { Observable, of, merge, Subscription } from 'rxjs';
+import { tap, debounceTime, distinctUntilChanged, switchMap, catchError, map, filter } from 'rxjs/operators';
 
 import { TransactionDataSource } from './transactions-datasource.service';
 import { TransactionService } from './transactions.service';
@@ -15,11 +15,13 @@ import { RecipientService } from '../transaction/recipient.service';
     templateUrl: './history.component.html',
     styleUrls: [ './history.component.css' ]
 })
-export class HistoryComponent implements OnInit, AfterViewInit {
+export class HistoryComponent implements OnInit, OnDestroy, AfterViewInit {
     dataSource: TransactionDataSource;
     displayedColumns = [ 'amount', 'credit', 'correspondent', 'transactionDate' ];
     filterForm: FormGroup;
     filteredData$: Observable<any>;
+    loadTransactionsSubscription: Subscription;
+    counterSubscription: Subscription;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -41,25 +43,29 @@ export class HistoryComponent implements OnInit, AfterViewInit {
             filterDateTo: [ null ]
         });
 
-        const correspondentChanges$ = this.filterForm.get('filterCorrespondent').valueChanges;
-        this.filteredData$ = correspondentChanges$.pipe(
-            startWith(''),
-            debounceTime(400),
-            distinctUntilChanged(),
+        const correspondentChanges$ = this.filterForm
+            .get('filterCorrespondent')
+            .valueChanges.pipe(debounceTime(400), distinctUntilChanged());
+
+        const noSearchStringCase = correspondentChanges$.pipe(filter((val: string) => val.length === 0), map(() => []));
+        const callServiceCase = correspondentChanges$.pipe(
+            filter((val: string) => val.length > 0),
             switchMap((value: string) =>
                 this.recipientService.getList(value).pipe(
-                    catchError(() => {
-                        return EMPTY;
+                    map((v: { users: any[] }) => v.users),
+                    catchError((err: any) => {
+                        return of([]);
                     })
                 )
             )
         );
+        this.filteredData$ = merge(noSearchStringCase, callServiceCase);
     }
 
     ngAfterViewInit() {
         // reset the paginator after sorting
         this.sort.sortChange.pipe(tap(() => (this.paginator.pageIndex = 0)));
-        this.dataSource.counter$
+        this.counterSubscription = this.dataSource.counter$
             .pipe(
                 tap((count) => {
                     this.paginator.length = count;
@@ -67,10 +73,12 @@ export class HistoryComponent implements OnInit, AfterViewInit {
             )
             .subscribe();
 
-        merge(this.sort.sortChange, this.paginator.page).pipe(tap(() => this.loadLessonsPage())).subscribe();
+        this.loadTransactionsSubscription = merge(this.sort.sortChange, this.paginator.page)
+            .pipe(tap(() => this.loadTransactionsPage()))
+            .subscribe();
     }
 
-    loadLessonsPage() {
+    loadTransactionsPage() {
         this.dataSource.loadLessons(
             this.filterForm.value.filterAmount,
             this.filterForm.value.filterCorrespondent,
@@ -85,14 +93,20 @@ export class HistoryComponent implements OnInit, AfterViewInit {
 
     public clearFilterForm() {
         this.filterForm.reset();
-        this.loadLessonsPage();
+        this.loadTransactionsPage();
     }
 
     public filter() {
-        this.loadLessonsPage();
+        this.paginator.pageIndex = 0;
+        this.loadTransactionsPage();
     }
 
     displayFn(recipient?: any): string | undefined {
         return recipient ? recipient.name : undefined;
+    }
+
+    ngOnDestroy(): void {
+        this.loadTransactionsSubscription.unsubscribe();
+        this.counterSubscription.unsubscribe();
     }
 }

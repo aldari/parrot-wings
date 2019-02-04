@@ -1,29 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PW.Core.Account.Dto;
-using PW.Core.Account.Query;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using PW.DataAccess.ApplicationData;
-using PW.DataAccess.Cqs;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace PW.DataAccess.Account.Query
+namespace PW.Application.Accounts.Queries.GetAccountLastTransactions
 {
-    public class GetLastAccountTransactionsQuery : EfQueryBase<ApplicationDbContext>, IGetLastAccountTransactionsQuery
+    public class AccountLastTransactionQueryHandler : IRequestHandler<AccountLastTransactionQuery, List<LastTransactionDto>>
     {
-        public GetLastAccountTransactionsQuery(ApplicationDbContext context)
-            : base(context)
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
+        public AccountLastTransactionQueryHandler(ApplicationDbContext context, IMapper mapper)
         {
+            _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<List<LastTransactionDto>> Execute(Guid accountId)
+        public async Task<List<LastTransactionDto>> Handle(AccountLastTransactionQuery request, CancellationToken cancellationToken)
         {
-            using (var command = DbContext.Database.GetDbConnection().CreateCommand())
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.Parameters.Add(new SqlParameter("@account", SqlDbType.UniqueIdentifier) { Value = accountId });
+                command.Parameters.Add(new SqlParameter("@account", SqlDbType.UniqueIdentifier) { Value = request.AccountId });
                 command.CommandText = @"SELECT TOP 10
                     CASE WHEN [DebitAccountId]=@account
                     THEN [Amount]
@@ -46,11 +49,11 @@ namespace PW.DataAccess.Account.Query
                     FROM [dbo].[AccountTransactions]
                         WHERE ( [DebitAccountId]=@account OR [CreditAccountId]=@account )
                     Order by [dbo].[AccountTransactions].TransactionDate desc";
-                DbContext.Database.OpenConnection();
-                DbDataReader reader = command.ExecuteReader();
+                _context.Database.OpenConnection();
+                DbDataReader reader = await command.ExecuteReaderAsync();
 
                 var list = new List<LastTransactionDto>();
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     list.Add(new LastTransactionDto
                     {

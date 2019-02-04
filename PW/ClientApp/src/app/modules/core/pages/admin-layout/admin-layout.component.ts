@@ -1,8 +1,8 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
-import { AuthService } from '../auth.service';
-import { HeaderService } from '../header.service';
+import { AuthService } from '../../../../auth.service';
+import { HeaderService } from '../../header.service';
 
 @Component({
     selector: 'app-admin-layout',

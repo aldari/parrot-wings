@@ -1,25 +1,26 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PW.Core.Account.Query;
+using PW.Application.Accounts.Queries.GetFilteredUsers;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace PW.Controllers
 {
     [Authorize]
-   // [Produces("application/json")]
     [Route("api/recipient")]
     public class RecipientController : Controller
     {
-        private readonly IGetFilteredUsersQuery _filteredUsersQuery;
+        private readonly IMediator _mediator;
 
-        public RecipientController(IGetFilteredUsersQuery filteredUsersQuery)
+        public RecipientController(IMediator mediator)
         {
-            _filteredUsersQuery = filteredUsersQuery;
+            _mediator = mediator;
         }
 
         /// <summary>
-        /// Returns a list of registered users .
+        /// Returns a list of registered users.
         /// </summary>
         /// <remarks>
         /// Here is a sample remarks placeholder.
@@ -27,11 +28,12 @@ namespace PW.Controllers
         /// <param name="nameFilter">The first name to search for</param>
         /// <returns>A string status</returns>
         [HttpGet("{nameFilter}")]
-        public async Task<ActionResult> Get(string nameFilter)
+        [ProducesResponseType(typeof(ListOfUsersByUsernameViewModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Get([FromRoute] FilteredUsersQuery query)
         {
             var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
-            var result = await _filteredUsersQuery.Execute(nameFilter, accountId);
-            return Ok(result);
+            query.AccountId = accountId;
+            return Ok(await _mediator.Send(query));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace PW.DataAccess.Account.Query
+namespace PW.Application.Accounts.Queries.GetAccountTransactions
 {
     public delegate IQueryable<TItem> QueryMutator<TItem, TSearch>(IQueryable<TItem> items, TSearch search);
 

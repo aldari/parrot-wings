@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PW.Application.Accounts.Queries.GetAccountLastTransactions;
+using PW.Application.Accounts.Queries.GetAccountTransactions;
 using PW.Core.Account.Command;
 using PW.Core.Account.Query;
 using PW.DataAccess.Account.Command;
+using PW.Hubs;
 using PW.Models;
 using System;
 using System.Threading.Tasks;
@@ -14,32 +18,29 @@ namespace PW.Api.Controllers
     public class TransactionController : Controller
     {
         private readonly AddTransactionCommandHandler _addTransactionCommandHandler;
-        private readonly IGetFilteredAccountTransactionsQuery _getAccountTransactionsQuery;
-        private readonly IGetLastAccountTransactionsQuery _getLastAccountTransactionsQuery;
+        private readonly NotifyHub _notifyHub;
+        private readonly IMediator _mediator;
 
         public TransactionController(AddTransactionCommandHandler addTransactionCommandHandler,
-            IGetFilteredAccountTransactionsQuery getAccountTransactionsQuery,
-            IGetLastAccountTransactionsQuery getLastAccountTransactionsQuery)
+            IMediator mediator)
         {
             _addTransactionCommandHandler = addTransactionCommandHandler;
-            _getAccountTransactionsQuery = getAccountTransactionsQuery;
-            _getLastAccountTransactionsQuery = getLastAccountTransactionsQuery;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetTransactions(int? amount, Guid correspondent, DateTime? from, DateTime? to,
-            string sortColumn, string sortOrder = "asc", int pageIndex = 0, int pageSize = 3)
+        public async Task<ActionResult> GetTransactions([FromQuery] AccountTransactionsQuery query)
         {
-            var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
-            return Ok(await _getAccountTransactionsQuery.Execute(sortColumn, sortOrder, accountId, pageIndex,
-                pageSize, amount, from, to, correspondent));
+            query.AccountId = Guid.Parse(User.FindFirst("AccountId").Value);
+            return Ok(await _mediator.Send(query));
         }
 
         [HttpGet("last")]
         public async Task<ActionResult> GetLastTransactions()
         {
             var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
-            return Ok(await _getLastAccountTransactionsQuery.Execute(accountId));
+            var query = new AccountLastTransactionQuery {AccountId = accountId };
+            return Ok(await _mediator.Send(query));
         }
 
         [HttpPost]
@@ -49,7 +50,10 @@ namespace PW.Api.Controllers
             var command = new AddTransactionCommand(accountId, model.Recipient, model.Amount);
             var result = await _addTransactionCommandHandler.ExecuteAsync(command);
             if (result.Success)
+            {
+                await _notifyHub.Notify("sherlock.holmes@gmail.com", model.Amount.ToString());
                 return Ok();
+            }
             return BadRequest(result);
         }
     }

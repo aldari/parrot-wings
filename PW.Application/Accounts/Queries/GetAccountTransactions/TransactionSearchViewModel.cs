@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace PW.DataAccess.Account.Query
+namespace PW.Application.Accounts.Queries.GetAccountTransactions
 {
     public class TransactionSearchViewModel
     {

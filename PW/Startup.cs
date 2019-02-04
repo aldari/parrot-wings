@@ -25,10 +25,14 @@ using PW.DataAccess.Account.Query;
 using PW.Core;
 using PW.DataAccess;
 using Swashbuckle.AspNetCore.Swagger;
-
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.SignalR;
+using PW.Application.Accounts.Queries.GetFilteredUsers;
+using MediatR;
 
 namespace PW
 {
@@ -55,19 +59,20 @@ namespace PW
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddTransient<IGetFilteredUsersQuery, GetFilteredUsersQuery>();
-            services.AddTransient<IGetLastAccountTransactionsQuery, GetLastAccountTransactionsQuery>();
-            services.AddTransient<IGetFilteredAccountTransactionsQuery, GetFilteredAccountTransactionsQuery>();
             services.AddTransient<IGetAccountBalanceQuery, GetAccountBalanceQuery>();
             services.AddTransient<IClock, Clock>();
 
             services.AddTransient<AddTransactionCommandHandler>();
             services.AddTransient<AddAccountCommandHandler>();
+            services.AddTransient<NotifyHub>();
+
+            services.AddMediatR(typeof(FilteredUsersQueryHandler).GetTypeInfo().Assembly);
 
             // Add ApplicationDbContext.
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
             services.AddSingleton<IJwtFactory, JwtFactory>();
-            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton(Configuration);
+            services.AddSingleton<UserInfoInMemory>();
 
             // Get options from app settings
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
@@ -121,13 +126,37 @@ namespace PW
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero
                     };
+                    jwt.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            // If the request is for our hub...
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/hubs/loopy")))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        },
+                        OnAuthenticationFailed = context =>
+                        {
+                            var te = context.Exception;
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             // регистрация настроек приложения
             services.AddOptions();
-            services.Configure<HostOptions>(Configuration.GetSection("HostOptions"));
+            services.AddCors();
             services.Configure<EmailServiceOptions>(Configuration.GetSection("EmailServiceOptions"));
+
             services.AddSignalR();
+
             services.AddMvc();
             //This line adds Swagger generation services to our container.
             services.AddSwaggerGen(c =>
@@ -156,6 +185,10 @@ namespace PW
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //app.UseCors(builder => builder
+                //    .WithOrigins("https://localhost:4200")
+                //    .AllowAnyMethod()
+                //    .AllowCredentials());
             }
             else
             {
@@ -185,12 +218,12 @@ namespace PW
                 ClockSkew = TimeSpan.Zero
             };
 
-            //app.UseSignalR(routes =>
-            //{
-            //    routes.MapHub<LoopyHub>("/hubs/loopy");
-            //});
-
             app.UseAuthentication();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NotifyHub>("/hubs/loopy");
+            });
 
             app.UseMvc(routes =>
             {
@@ -209,6 +242,7 @@ namespace PW
                 if (env.IsDevelopment())
                 {
                     spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
 

@@ -1,5 +1,5 @@
-import { Observable, EMPTY } from 'rxjs';
-import { switchMap, debounceTime, distinctUntilChanged, startWith, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { switchMap, debounceTime, distinctUntilChanged, catchError, map, filter, merge } from 'rxjs/operators';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormGroupDirective } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
@@ -46,20 +46,25 @@ export class TransactionComponent implements OnInit {
         });
 
         this.errMsg = '';
-        this.filteredData$ = this.transactionForm.get('recipient').valueChanges.pipe(
-            startWith('*'),
-            // filter((val: string) => val.length > 0),
-            debounceTime(400),
-            distinctUntilChanged(),
+
+        const searchString$ = this.transactionForm
+            .get('recipient')
+            .valueChanges.pipe(debounceTime(400), distinctUntilChanged());
+
+        const noSearchStringCase = searchString$.pipe(filter((val: string) => val.length === 0), map(() => []));
+        const callServiceCase = searchString$.pipe(
+            filter((val: string) => val.length > 0),
             switchMap((value: string) =>
                 this.recipientService.getList(value).pipe(
+                    map((v: { users: any[] }) => v.users),
                     catchError((err: any) => {
                         this.errMsg = err.message;
-                        return EMPTY;
+                        return of([]);
                     })
                 )
             )
         );
+        this.filteredData$ = noSearchStringCase.pipe(merge(callServiceCase));
     }
 
     save() {
