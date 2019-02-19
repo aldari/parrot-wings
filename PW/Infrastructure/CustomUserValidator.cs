@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using PW.Persistence;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using PW.DataAccess.ApplicationData;
-using Microsoft.AspNetCore.Identity;
 
 namespace PW.Infrastructure
 {

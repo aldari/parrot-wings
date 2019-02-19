@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PW.DataAccess.ApplicationData;
+using PW.Persistence;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -14,12 +13,10 @@ namespace PW.Application.Accounts.Queries.GetAccountLastTransactions
     public class AccountLastTransactionQueryHandler : IRequestHandler<AccountLastTransactionQuery, List<LastTransactionDto>>
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public AccountLastTransactionQueryHandler(ApplicationDbContext context, IMapper mapper)
+        public AccountLastTransactionQueryHandler(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<List<LastTransactionDto>> Handle(AccountLastTransactionQuery request, CancellationToken cancellationToken)

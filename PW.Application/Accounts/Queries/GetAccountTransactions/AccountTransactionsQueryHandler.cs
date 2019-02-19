@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PW.Core.Account.Domain;
-using PW.DataAccess.ApplicationData;
+using PW.Domain.Entities;
+using PW.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,7 +105,7 @@ namespace PW.Application.Accounts.Queries.GetAccountTransactions
             };
 
             // apply filters and sort
-            var transactionsQuery = _context.AccountTransactions.AsQueryable();
+            var transactionsQuery = _context.AccountTransactions.AsNoTracking();
             foreach (var searchFieldMutator in searchFieldMutators)
                 transactionsQuery = searchFieldMutator.Apply(searchModel, transactionsQuery);
 

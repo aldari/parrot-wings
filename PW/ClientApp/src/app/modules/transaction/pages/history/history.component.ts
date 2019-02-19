@@ -47,9 +47,9 @@ export class HistoryComponent implements OnInit, OnDestroy, AfterViewInit {
             .get('filterCorrespondent')
             .valueChanges.pipe(debounceTime(400), distinctUntilChanged());
 
-        const noSearchStringCase = correspondentChanges$.pipe(filter((val: string) => val.length === 0), map(() => []));
+        const noSearchStringCase = correspondentChanges$.pipe(filter((val: string) => val === null), map(() => []));
         const callServiceCase = correspondentChanges$.pipe(
-            filter((val: string) => val.length > 0),
+            filter((val: string) => !!val),
             switchMap((value: string) =>
                 this.recipientService.getList(value).pipe(
                     map((v: { users: any[] }) => v.users),

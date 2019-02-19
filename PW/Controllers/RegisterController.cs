@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PW.Core.Account.Command;
-using PW.Core.Account.Domain;
-using PW.DataAccess.Account.Command;
+using PW.Application.Accounts.Queries.GetAccountBalance;
+using PW.Domain.Entities;
+using PW.Infrastructure;
 using PW.Models;
+using PW.Persistence;
 using System;
 using System.Threading.Tasks;
-using PW.DataAccess.ApplicationData;
-using PW.Infrastructure;
 
 namespace PW.Controllers
 {
@@ -18,24 +18,23 @@ namespace PW.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
-        private readonly AddAccountCommandHandler _accountCommandHandler;
+        private readonly IMediator _mediator;
 
         public RegisterController(UserManager<ApplicationUser> userManager, 
             IMapper mapper,
-            AddAccountCommandHandler accountCommandHandler,
-            ApplicationDbContext applicationDbContext
+            ApplicationDbContext applicationDbContext,
+            IMediator mediator
             )
         {
             _mapper = mapper;
             _userManager = userManager;
             _userManager.UserValidators.Clear();
             _userManager.UserValidators.Add(new CustomUserValidator<ApplicationUser>(applicationDbContext));
-            _accountCommandHandler = accountCommandHandler;
+            _mediator = mediator;
         }
         
         [AllowAnonymous]
         [HttpPost]
-        //[Route("register")]
         public async Task<IActionResult> Register([FromBody]RegisterVm userModel)
         {
             if (!ModelState.IsValid)
@@ -55,8 +54,12 @@ namespace PW.Controllers
             var test = _userManager.ConfirmEmailAsync(user, confirmationToken).Result;
             if (result.Succeeded)
             {
-                await _accountCommandHandler.ExecuteAsync(
-                    new AddAccountCommand(Guid.Parse(user.Id), userModel.FullName));
+                var request = new Application.Accounts.Commands.AddAccount.AddAccountCommand
+                {
+                    Name = userModel.FullName,
+                    UserId = Guid.Parse(user.Id)
+                };
+                await _mediator.Send(request);
             }
 
             IActionResult errorResult = GetErrorResult(result);
@@ -68,11 +71,11 @@ namespace PW.Controllers
             return Ok(new { user.Email, user.UserName });
         }
 
-        [HttpGet("{id}")]
-        public async Task<OkObjectResult> GetUser(Guid id)
+        [HttpGet("balance")]
+        public async Task<OkObjectResult> GetUserBalance()
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-            return Ok(_mapper.Map<UserVm>(user));
+            var accountId = Guid.Parse(User.FindFirst("AccountId").Value);            
+            return Ok(await _mediator.Send(new AccountBalanceQuery{ AccountId = accountId }));
         }
 
         private IActionResult GetErrorResult(IdentityResult result)

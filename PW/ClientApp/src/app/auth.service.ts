@@ -1,17 +1,16 @@
-import { Subject, Observable } from 'rxjs';
-import { Injectable, EventEmitter, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { DOCUMENT } from '@angular/platform-browser';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
     authKey = 'auth';
 
-    constructor(private http: HttpClient, @Inject(DOCUMENT) private document, private router: Router) {}
+    constructor(private http: HttpClient, private router: Router) {}
 
     login(email: string, password: string): any {
         const url = environment.apiUrl + '/api/auth/login';
@@ -24,8 +23,7 @@ export class AuthService {
         return this.http
             .post(url, JSON.stringify(data), {
                 headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    Tenant: this.document.location.hostname
+                    'Content-Type': 'application/json'
                 })
             })
             .pipe(
@@ -33,7 +31,8 @@ export class AuthService {
                     const auth = response;
                     this.setAuth(auth);
                     return auth;
-                })
+                }),
+                catchError((error) => this._handleError(error))
             );
     }
 
@@ -82,10 +81,8 @@ export class AuthService {
         return localStorage.getItem(this.authKey) != null;
     }
 
-    // public refreshToken(): Observable<string>  {
-    //     return this.login(this.username, this.password)
-    //     .map((data) => {
-    //         return data['auth_token'];
-    //     });
-    // }
+    private _handleError(err: HttpErrorResponse | any): Observable<any> {
+        const errorMsg = err.message || 'Error: Unable to complete request.';
+        return throwError(errorMsg);
+    }
 }

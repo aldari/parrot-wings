@@ -1,12 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PW.Application.Accounts.Commands.AddTransaction;
 using PW.Application.Accounts.Queries.GetAccountLastTransactions;
 using PW.Application.Accounts.Queries.GetAccountTransactions;
-using PW.Core.Account.Command;
-using PW.Core.Account.Query;
-using PW.DataAccess.Account.Command;
-using PW.Hubs;
 using PW.Models;
 using System;
 using System.Threading.Tasks;
@@ -17,14 +14,10 @@ namespace PW.Api.Controllers
     [Route("api/transaction")]
     public class TransactionController : Controller
     {
-        private readonly AddTransactionCommandHandler _addTransactionCommandHandler;
-        private readonly NotifyHub _notifyHub;
         private readonly IMediator _mediator;
 
-        public TransactionController(AddTransactionCommandHandler addTransactionCommandHandler,
-            IMediator mediator)
+        public TransactionController(IMediator mediator)
         {
-            _addTransactionCommandHandler = addTransactionCommandHandler;
             _mediator = mediator;
         }
 
@@ -47,11 +40,15 @@ namespace PW.Api.Controllers
         public async Task<ActionResult> AddTransactionAsync([FromBody] TransactionModel model)
         {
             var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
-            var command = new AddTransactionCommand(accountId, model.Recipient, model.Amount);
-            var result = await _addTransactionCommandHandler.ExecuteAsync(command);
+            var command = new AddTransactionCommand
+            {
+                DebitAccount = accountId,
+                CreditAccount = model.Recipient,
+                Amount = model.Amount
+            };
+            var result = await _mediator.Send(command);
             if (result.Success)
             {
-                await _notifyHub.Notify("sherlock.holmes@gmail.com", model.Amount.ToString());
                 return Ok();
             }
             return BadRequest(result);

@@ -5,17 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Accounts\Commands\AddAccount\" />
-    <Folder Include="Accounts\Commands\AddTransaction\" />
-    <Folder Include="Accounts\Queries\GetAccountBalance\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.1.1" />
+    <PackageReference Include="FluentValidation" Version="8.1.3" />
     <PackageReference Include="MediatR" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PW.DataAccess\PW.DataAccess.csproj" />
     <ProjectReference Include="..\PW.Domain\PW.Domain.csproj" />
     <ProjectReference Include="..\PW.Persistence\PW.Persistence.csproj" />
   </ItemGroup>

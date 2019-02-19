@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PW.Core.Account.Domain;
-using PW.DataAccess.ApplicationData;
+using PW.Domain.Entities;
+using PW.Persistence;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

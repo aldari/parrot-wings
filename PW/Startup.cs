@@ -1,38 +1,30 @@
 using AutoMapper;
-using PW.Core.AppSettings;
-using PW.Core.Conventions;
-using PW.DataAccess.ApplicationData;
-using PW.DataAccess.ExternalServices;
-using PW.Hubs;
-using PW.Infrastructure;
+using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using PW.Application.Accounts.Commands.AddAccount;
+using PW.Application.Accounts.Queries.GetFilteredUsers;
+using PW.Domain.Entities;
+using PW.Hubs;
+using PW.Infrastructure;
+using PW.Persistence;
+using PW.WebUI.Filters;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using PW.Core.Account.Domain;
-using PW.Core.Account.Query;
-using PW.DataAccess.Account.Command;
-using PW.DataAccess.Account.Query;
-using PW.Core;
-using PW.DataAccess;
-using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
-using Microsoft.AspNetCore.SignalR;
-using PW.Application.Accounts.Queries.GetFilteredUsers;
-using MediatR;
 
 namespace PW
 {
@@ -59,17 +51,13 @@ namespace PW
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddTransient<IGetAccountBalanceQuery, GetAccountBalanceQuery>();
-            services.AddTransient<IClock, Clock>();
-
-            services.AddTransient<AddTransactionCommandHandler>();
-            services.AddTransient<AddAccountCommandHandler>();
             services.AddTransient<NotifyHub>();
 
             services.AddMediatR(typeof(FilteredUsersQueryHandler).GetTypeInfo().Assembly);
 
             // Add ApplicationDbContext.
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton(Configuration);
             services.AddSingleton<UserInfoInMemory>();
@@ -153,11 +141,13 @@ namespace PW
             // регистрация настроек приложения
             services.AddOptions();
             services.AddCors();
-            services.Configure<EmailServiceOptions>(Configuration.GetSection("EmailServiceOptions"));
+            //services.Configure<EmailServiceOptions>(Configuration.GetSection("EmailServiceOptions"));
 
             services.AddSignalR();
 
-            services.AddMvc();
+            services.AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddAccountCommandValidator>());
+
             //This line adds Swagger generation services to our container.
             services.AddSwaggerGen(c =>
             {
@@ -185,10 +175,10 @@ namespace PW
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseCors(builder => builder
-                //    .WithOrigins("https://localhost:4200")
-                //    .AllowAnyMethod()
-                //    .AllowCredentials());
+                app.UseCors(builder => builder
+                    .WithOrigins("https://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowCredentials());
             }
             else
             {
@@ -218,6 +208,15 @@ namespace PW
                 ClockSkew = TimeSpan.Zero
             };
 
+            //This line enables the app to use Swagger, with the configuration in the ConfigureServices method.
+            app.UseSwagger();
+
+            //This line enables Swagger UI, which provides us with a nice, simple UI with which we can view our API calls.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
+            });
+
             app.UseAuthentication();
 
             app.UseSignalR(routes =>
@@ -244,16 +243,7 @@ namespace PW
                     spa.UseAngularCliServer(npmScript: "start");
                     //spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
-            });
-
-            //This line enables the app to use Swagger, with the configuration in the ConfigureServices method.
-            app.UseSwagger();
-
-            //This line enables Swagger UI, which provides us with a nice, simple UI with which we can view our API calls.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
-            });
+            });            
         }
     }
 }

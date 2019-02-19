@@ -25,9 +25,10 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { AdminGuard } from './guards/admin-guard.service';
 import { AuthGuard } from './guards/auth-guard.service';
+import { OnlyNumberDirective } from './directives/only-number.directive';
 
 @NgModule({
-    declarations: [],
+    declarations: [ OnlyNumberDirective ],
     imports: [
         MatInputModule,
         MatDatepickerModule,
@@ -73,7 +74,8 @@ import { AuthGuard } from './guards/auth-guard.service';
         MatProgressButtons,
         MatCardModule,
         MatFormFieldModule,
-        MatMomentDateModule
+        MatMomentDateModule,
+        OnlyNumberDirective
     ],
     providers: [ AdminGuard, AuthGuard ]
 })

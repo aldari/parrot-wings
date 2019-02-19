@@ -5,7 +5,7 @@
       <div class="body">
         <form novalidate [formGroup]="transactionForm" (ngSubmit)="save()">
           <mat-form-field>
-            <input matInput type="text" formControlName="amount" placeholder="Amount" form>
+            <input matInput type="text" formControlName="amount" placeholder="Amount" appOnlyNumber>
             <mat-error *ngIf="transactionForm.get('amount').hasError('required')">
               Amount is <strong>required</strong>
             </mat-error>

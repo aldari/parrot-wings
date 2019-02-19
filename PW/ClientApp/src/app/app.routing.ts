@@ -6,7 +6,6 @@ import { AdminLayoutComponent } from './modules/core/pages/admin-layout/admin-la
 import { TransactionComponent } from './modules/transaction/pages/transaction/transaction.component';
 import { LastTransactionComponent } from './modules/transaction/pages/last-transaction/last-transaction.component';
 import { HistoryComponent } from './modules/transaction/pages/history/history.component';
-import { TestComponent } from './modules/transaction/pages/test/test.component';
 import { AuthGuard } from './modules/shared/guards/auth-guard.service';
 
 const appRoutes: Routes = [
@@ -16,8 +15,7 @@ const appRoutes: Routes = [
         children: [
             { path: '', component: TransactionComponent, canActivate: [ AuthGuard ] },
             { path: 'last-transaction', component: LastTransactionComponent, canActivate: [ AuthGuard ] },
-            { path: 'history', component: HistoryComponent, canActivate: [ AuthGuard ] },
-            { path: 'test', component: TestComponent }
+            { path: 'history', component: HistoryComponent, canActivate: [ AuthGuard ] }
         ]
     },
     {

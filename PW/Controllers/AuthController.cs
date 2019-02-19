@@ -7,13 +7,12 @@ using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Linq;
-using PW.Core.Account.Domain;
 using PW.Models;
 using PW.Infrastructure;
-using PW.Data;
-using PW.DataAccess.ApplicationData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using PW.Domain.Entities;
+using PW.Persistence;
 
 namespace PW.Controllers
 {
@@ -61,15 +60,12 @@ namespace PW.Controllers
                 return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
-            var isAdministrator = roles.Contains(RolesList.AdministratorRole);
-            var isSuperuser = roles.Contains(RolesList.SuperuserRole);
             var accountId = _applicationDbContext.Accounts.Single(x => x.UserId.ToString() == user.Id).Id;
             // Serialize and return the response
             var response = new
             {
                 id = identity.Claims.Single(c => c.Type == "id").Value,
-                auth_token = await _jwtFactory.GenerateEncodedToken(credentials.Email, identity, isAdministrator, isSuperuser, 
+                auth_token = await _jwtFactory.GenerateEncodedToken(credentials.Email, identity, 
                     user.FullName, accountId),
                 expires_in = (int)_jwtOptions.ValidFor.TotalSeconds
             };
@@ -83,7 +79,6 @@ namespace PW.Controllers
             if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
             {
                 // get the user to verifty
-                // var userToVerify = await _userManager.FindByNameAsync(userName);
                 var userToVerify = _applicationDbContext.Users.SingleOrDefault(x => x.Email == email);
 
                 if (userToVerify != null)

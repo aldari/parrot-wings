@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using System;
-using PW.Core.Account.Domain;
+using PW.Domain.Entities;
 using PW.Models;
-using PW.Core.Extensions;
 
 namespace PW.Infrastructure
 {

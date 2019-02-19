@@ -11,9 +11,7 @@ export class RecipientService {
     constructor(private http: HttpClient) {}
 
     getList(filter: string) {
-        return this.http
-            .get(this.baseUrl + `${filter ? filter : '*'}/`, this.getRequestOptions())
-            .pipe(catchError(this.handleError));
+        return this.http.get(this.baseUrl + `${filter}/`, this.getRequestOptions()).pipe(catchError(this.handleError));
     }
 
     private handleError(error: HttpErrorResponse) {

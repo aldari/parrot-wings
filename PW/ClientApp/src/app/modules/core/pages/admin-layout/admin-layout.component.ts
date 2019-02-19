@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { AuthService } from '../../../../auth.service';
 import { HeaderService } from '../../header.service';
+import { AccountBalanceService } from '../../account-balance.service';
 
 @Component({
     selector: 'app-admin-layout',
@@ -12,7 +13,12 @@ import { HeaderService } from '../../header.service';
 export class AdminLayoutComponent implements OnInit {
     name: string;
 
-    constructor(private router: Router, private authService: AuthService, private headerService: HeaderService) {}
+    constructor(
+        private router: Router,
+        private authService: AuthService,
+        private headerService: HeaderService,
+        public accountService: AccountBalanceService
+    ) {}
 
     ngOnInit() {
         this.headerService.userTitleChanged.subscribe(

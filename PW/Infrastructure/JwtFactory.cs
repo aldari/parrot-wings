@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using PW.Data;
 
 namespace PW.Infrastructure
 {
@@ -21,8 +20,6 @@ namespace PW.Infrastructure
 
         public async Task<string> GenerateEncodedToken(string userName,
             ClaimsIdentity identity,
-            bool isAdministrator,
-            bool isSuperuser,
             string fullName,
             Guid accountId)
         {
@@ -36,11 +33,6 @@ namespace PW.Infrastructure
                 new Claim("FullName", fullName),
                 new Claim("AccountId", accountId.ToString()),
              };
-
-            if (isAdministrator)
-                claims.Add(new Claim("Role", RolesList.AdministratorRole, ClaimValueTypes.String));
-            if (isSuperuser)
-                claims.Add(new Claim("Role", RolesList.SuperuserRole, ClaimValueTypes.String));
 
             // Create the JWT security token and encode it.
             var jwt = new JwtSecurityToken(

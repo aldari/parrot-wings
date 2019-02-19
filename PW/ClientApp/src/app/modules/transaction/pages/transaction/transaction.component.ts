@@ -9,6 +9,7 @@ import { Transaction } from './transaction.model';
 import { RecipientService } from './recipient.service';
 import { TransactionService } from '../history/transactions.service';
 import { forceOptionValidator } from './forceOptionValidator';
+import { AccountBalanceService } from '../../../core/account-balance.service';
 
 @Component({
     selector: 'app-transaction',
@@ -25,7 +26,8 @@ export class TransactionComponent implements OnInit {
         private recipientService: RecipientService,
         private transactionService: TransactionService,
         private fb: FormBuilder,
-        public snackBar: MatSnackBar
+        public snackBar: MatSnackBar,
+        public accountBalanceService: AccountBalanceService
     ) {}
 
     spinnerButtonOptions: ButtonOpts = {
@@ -51,9 +53,9 @@ export class TransactionComponent implements OnInit {
             .get('recipient')
             .valueChanges.pipe(debounceTime(400), distinctUntilChanged());
 
-        const noSearchStringCase = searchString$.pipe(filter((val: string) => val.length === 0), map(() => []));
+        const noSearchStringCase = searchString$.pipe(filter((val: string) => val === null), map(() => []));
         const callServiceCase = searchString$.pipe(
-            filter((val: string) => val.length > 0),
+            filter((val: string) => !!val),
             switchMap((value: string) =>
                 this.recipientService.getList(value).pipe(
                     map((v: { users: any[] }) => v.users),
@@ -83,6 +85,7 @@ export class TransactionComponent implements OnInit {
         this.transactionService.addTransaction(transaction).subscribe(
             () => {
                 this.myForm.resetForm();
+                this.accountBalanceService.reduce(transaction.amount);
                 this.snackBar.open('Transaction successfuly sent');
             },
             (error) => {
