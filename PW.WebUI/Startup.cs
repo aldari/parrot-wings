@@ -15,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 using PW.Application.Accounts.Commands.AddAccount;
 using PW.Application.Accounts.Queries.GetFilteredUsers;
 using PW.Domain.Entities;
-using PW.Hubs;
 using PW.Infrastructure;
 using PW.Persistence;
 using PW.WebUI.Filters;
@@ -51,8 +50,6 @@ namespace PW
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddTransient<NotifyHub>();
-
             services.AddMediatR(typeof(FilteredUsersQueryHandler).GetTypeInfo().Assembly);
 
             // Add ApplicationDbContext.
@@ -60,7 +57,6 @@ namespace PW
                 options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton(Configuration);
-            services.AddSingleton<UserInfoInMemory>();
 
             // Get options from app settings
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
@@ -219,11 +215,6 @@ namespace PW
 
             app.UseAuthentication();
 
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<NotifyHub>("/hubs/loopy");
-            });
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -240,8 +231,8 @@ namespace PW
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
-                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });            
         }

@@ -47,7 +47,6 @@ export class RegisterComponent implements OnInit {
             () => {
                 this.loaderFlag = false;
                 this.snackBar.open('User has registered');
-                //this.registerForm.resetForm();
                 this.registerForm.reset(this.registerForm.value);
             },
             (error) => {

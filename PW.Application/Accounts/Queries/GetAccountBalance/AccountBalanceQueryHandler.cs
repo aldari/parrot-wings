@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace PW.Application.Accounts.Queries.GetAccountBalance
 {
-    public class AccountBalanceQueryHandler: IRequestHandler<AccountBalanceQuery, int>
+    public class AccountBalanceQueryHandler: IRequestHandler<AccountBalanceQuery, BalanceDto>
     {
         private readonly ApplicationDbContext _context;
 
-        AccountBalanceQueryHandler(ApplicationDbContext context)
+        public AccountBalanceQueryHandler(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<int> Handle(AccountBalanceQuery request, CancellationToken cancellationToken)
+        public async Task<BalanceDto> Handle(AccountBalanceQuery request, CancellationToken cancellationToken)
         {
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
@@ -34,7 +34,7 @@ namespace PW.Application.Accounts.Queries.GetAccountBalance
                 ) as t";
                 _context.Database.OpenConnection();
                 var result = (int)await command.ExecuteScalarAsync();
-                return result;
+                return new BalanceDto { Balance = result };
             }
         }
     }

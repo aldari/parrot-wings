@@ -14,7 +14,11 @@ const appRoutes: Routes = [
         component: AdminLayoutComponent,
         children: [
             { path: '', component: TransactionComponent, canActivate: [ AuthGuard ] },
-            { path: 'last-transaction', component: LastTransactionComponent, canActivate: [ AuthGuard ] },
+            {
+                path: 'last-transaction',
+                component: LastTransactionComponent,
+                canActivate: [ AuthGuard ]
+            },
             { path: 'history', component: HistoryComponent, canActivate: [ AuthGuard ] }
         ]
     },

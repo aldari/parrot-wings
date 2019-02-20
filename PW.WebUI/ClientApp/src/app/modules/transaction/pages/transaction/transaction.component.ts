@@ -1,15 +1,14 @@
-import { Observable, of } from 'rxjs';
-import { switchMap, debounceTime, distinctUntilChanged, catchError, map, filter, merge } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormGroupDirective } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ButtonOpts } from 'mat-progress-buttons';
 
 import { Transaction } from './transaction.model';
-import { RecipientService } from './recipient.service';
-import { TransactionService } from '../history/transactions.service';
 import { forceOptionValidator } from './forceOptionValidator';
 import { AccountBalanceService } from '../../../core/account-balance.service';
+import { RecipientAutocompleteService } from '../../services/recipient-autocomplete.service';
+import { TransactionApiService } from '../../services/transaction-api.service';
 
 @Component({
     selector: 'app-transaction',
@@ -23,8 +22,8 @@ export class TransactionComponent implements OnInit {
     errMsg: string;
 
     constructor(
-        private recipientService: RecipientService,
-        private transactionService: TransactionService,
+        private recipientAutocompleteService: RecipientAutocompleteService,
+        private transactionApiService: TransactionApiService,
         private fb: FormBuilder,
         public snackBar: MatSnackBar,
         public accountBalanceService: AccountBalanceService
@@ -49,24 +48,8 @@ export class TransactionComponent implements OnInit {
 
         this.errMsg = '';
 
-        const searchString$ = this.transactionForm
-            .get('recipient')
-            .valueChanges.pipe(debounceTime(400), distinctUntilChanged());
-
-        const noSearchStringCase = searchString$.pipe(filter((val: string) => val === null), map(() => []));
-        const callServiceCase = searchString$.pipe(
-            filter((val: string) => !!val),
-            switchMap((value: string) =>
-                this.recipientService.getList(value).pipe(
-                    map((v: { users: any[] }) => v.users),
-                    catchError((err: any) => {
-                        this.errMsg = err.message;
-                        return of([]);
-                    })
-                )
-            )
-        );
-        this.filteredData$ = noSearchStringCase.pipe(merge(callServiceCase));
+        const searchString$ = this.transactionForm.get('recipient').valueChanges;
+        this.filteredData$ = this.recipientAutocompleteService.getRecipientListAfterAutocompleteEdit(searchString$);
     }
 
     save() {
@@ -82,7 +65,7 @@ export class TransactionComponent implements OnInit {
         transaction.amount = this.transactionForm.value['amount'];
         transaction.recipient = this.transactionForm.value['recipient']['id'];
 
-        this.transactionService.addTransaction(transaction).subscribe(
+        this.transactionApiService.addTransaction(transaction).subscribe(
             () => {
                 this.myForm.resetForm();
                 this.accountBalanceService.reduce(transaction.amount);

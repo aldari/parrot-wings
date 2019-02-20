@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
-import { Observable, of, merge, Subscription } from 'rxjs';
-import { tap, debounceTime, distinctUntilChanged, switchMap, catchError, map, filter } from 'rxjs/operators';
+import { Observable, merge, Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-import { TransactionDataSource } from './transactions-datasource.service';
-import { TransactionService } from './transactions.service';
-import { RecipientService } from '../transaction/recipient.service';
+import { TransactionDataSource } from '../../services/transactions-datasource.service';
+import { RecipientAutocompleteService } from '../../services/recipient-autocomplete.service';
+import { TransactionApiService } from '../../services/transaction-api.service';
 
 @Component({
     selector: 'app-history',
@@ -27,13 +27,13 @@ export class HistoryComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild(MatSort) sort: MatSort;
 
     constructor(
-        private transactionService: TransactionService,
-        private recipientService: RecipientService,
-        private fb: FormBuilder
+        private transactionApiService: TransactionApiService,
+        private fb: FormBuilder,
+        private recipientAutocompleteService: RecipientAutocompleteService
     ) {}
 
     ngOnInit() {
-        this.dataSource = new TransactionDataSource(this.transactionService);
+        this.dataSource = new TransactionDataSource(this.transactionApiService);
         this.dataSource.loadLessons(null, '', null, null, 'transactionDate', 'asc', 0, 3);
 
         this.filterForm = this.fb.group({
@@ -43,23 +43,10 @@ export class HistoryComponent implements OnInit, OnDestroy, AfterViewInit {
             filterDateTo: [ null ]
         });
 
-        const correspondentChanges$ = this.filterForm
-            .get('filterCorrespondent')
-            .valueChanges.pipe(debounceTime(400), distinctUntilChanged());
-
-        const noSearchStringCase = correspondentChanges$.pipe(filter((val: string) => val === null), map(() => []));
-        const callServiceCase = correspondentChanges$.pipe(
-            filter((val: string) => !!val),
-            switchMap((value: string) =>
-                this.recipientService.getList(value).pipe(
-                    map((v: { users: any[] }) => v.users),
-                    catchError((err: any) => {
-                        return of([]);
-                    })
-                )
-            )
+        const correspondentChanges$ = this.filterForm.get('filterCorrespondent').valueChanges;
+        this.filteredData$ = this.recipientAutocompleteService.getRecipientListAfterAutocompleteEdit(
+            correspondentChanges$
         );
-        this.filteredData$ = merge(noSearchStringCase, callServiceCase);
     }
 
     ngAfterViewInit() {

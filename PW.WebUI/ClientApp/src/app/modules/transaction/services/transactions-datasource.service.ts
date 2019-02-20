@@ -1,11 +1,11 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-
-import { TransactionRow } from './TransactionRow';
-import { TransactionService } from './transactions.service';
-import { FilteredResponse } from './filtered-response.model';
 import { Moment } from 'moment';
+
+import { TransactionRow } from '../pages/history/transactionrow.model';
+import { FilteredResponse } from '../pages/history/filtered-response.model';
+import { TransactionApiService } from './transaction-api.service';
 
 export class TransactionDataSource implements DataSource<TransactionRow> {
     private transactionsSubject = new BehaviorSubject<TransactionRow[]>([]);
@@ -15,7 +15,7 @@ export class TransactionDataSource implements DataSource<TransactionRow> {
     public counter$ = this.countSubject.asObservable();
     public loading$ = this.loadingSubject.asObservable();
 
-    constructor(private transactionService: TransactionService) {}
+    constructor(private transactionApiService: TransactionApiService) {}
 
     connect(collectionViewer: CollectionViewer): Observable<TransactionRow[]> {
         return this.transactionsSubject.asObservable();
@@ -38,8 +38,8 @@ export class TransactionDataSource implements DataSource<TransactionRow> {
     ) {
         this.loadingSubject.next(true);
 
-        this.transactionService
-            .getList(
+        this.transactionApiService
+            .getTransactionHistoryItems(
                 amount,
                 correspondent ? correspondent['id'] : null,
                 from ? from.toISOString() : null,

@@ -12,7 +12,7 @@ export class AccountBalanceService {
 
     constructor() {}
 
-    private setBalance(newValue: number) {
+    public setBalance(newValue: number) {
         this.internalBalance = newValue;
         this.balance.next(this.internalBalance);
     }

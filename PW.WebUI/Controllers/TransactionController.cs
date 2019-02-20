@@ -42,8 +42,8 @@ namespace PW.Api.Controllers
             var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
             var command = new AddTransactionCommand
             {
-                DebitAccount = accountId,
-                CreditAccount = model.Recipient,
+                DebitAccount = model.Recipient,
+                CreditAccount = accountId,
                 Amount = model.Amount
             };
             var result = await _mediator.Send(command);

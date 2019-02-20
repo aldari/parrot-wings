@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,16 +16,13 @@ namespace PW.Controllers
     public class RegisterController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
         public RegisterController(UserManager<ApplicationUser> userManager, 
-            IMapper mapper,
             ApplicationDbContext applicationDbContext,
             IMediator mediator
             )
         {
-            _mapper = mapper;
             _userManager = userManager;
             _userManager.UserValidators.Clear();
             _userManager.UserValidators.Add(new CustomUserValidator<ApplicationUser>(applicationDbContext));
@@ -72,6 +68,7 @@ namespace PW.Controllers
         }
 
         [HttpGet("balance")]
+        [Authorize]
         public async Task<OkObjectResult> GetUserBalance()
         {
             var accountId = Guid.Parse(User.FindFirst("AccountId").Value);            

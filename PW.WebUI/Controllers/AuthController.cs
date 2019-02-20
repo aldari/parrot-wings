@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using System.Linq;
-using PW.Models;
-using PW.Infrastructure;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using PW.Domain.Entities;
+using PW.Infrastructure;
+using PW.Models;
 using PW.Persistence;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace PW.Controllers
 {

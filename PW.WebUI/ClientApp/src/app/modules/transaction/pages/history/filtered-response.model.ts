@@ -1,4 +1,4 @@
-import { TransactionRow } from './TransactionRow';
+import { TransactionRow } from './transactionrow.model';
 
 export class FilteredResponse {
     public transactions: TransactionRow[];
