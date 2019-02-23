@@ -1,5 +1,5 @@
 export class Transaction {
-    public recipient: number;
+    public recipient: string;
     public amount: number;
     constructor() {}
 }

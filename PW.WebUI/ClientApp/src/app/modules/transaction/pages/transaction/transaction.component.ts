@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormGroupDirective } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { ButtonOpts } from 'mat-progress-buttons';
@@ -15,11 +15,12 @@ import { TransactionApiService } from '../../services/transaction-api.service';
     templateUrl: './transaction.component.html',
     styleUrls: [ './transaction.component.css' ]
 })
-export class TransactionComponent implements OnInit {
+export class TransactionComponent implements OnInit, OnDestroy {
     filteredData$: Observable<any>;
     transactionForm: FormGroup;
     @ViewChild(FormGroupDirective) myForm;
     errMsg: string;
+    apiSubscription: Subscription;
 
     constructor(
         private recipientAutocompleteService: RecipientAutocompleteService,
@@ -65,7 +66,7 @@ export class TransactionComponent implements OnInit {
         transaction.amount = this.transactionForm.value['amount'];
         transaction.recipient = this.transactionForm.value['recipient']['id'];
 
-        this.transactionApiService.addTransaction(transaction).subscribe(
+        this.apiSubscription = this.transactionApiService.addTransaction(transaction).subscribe(
             () => {
                 this.myForm.resetForm();
                 this.accountBalanceService.reduce(transaction.amount);
@@ -85,5 +86,9 @@ export class TransactionComponent implements OnInit {
 
     displayFn(recipient?: any): string | undefined {
         return recipient ? recipient.name : undefined;
+    }
+
+    ngOnDestroy() {
+        if (this.apiSubscription) this.apiSubscription.unsubscribe();
     }
 }

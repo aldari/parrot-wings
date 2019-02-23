@@ -1,6 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormGroupDirective } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
 import { AuthService } from '../../../auth.service';
 
 @Component({
@@ -8,10 +10,11 @@ import { AuthService } from '../../../auth.service';
     templateUrl: './login.component.html',
     styleUrls: [ './login.component.css' ]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
     signinForm: FormGroup;
     @ViewChild(FormGroupDirective) loginForm;
     loginError = false;
+    apiSubscription: Subscription;
 
     constructor(private router: Router, private authService: AuthService, private fb: FormBuilder) {}
 
@@ -41,5 +44,9 @@ export class LoginComponent implements OnInit {
                 this.loginError = true;
             }
         );
+    }
+
+    ngOnDestroy(): void {
+      if (this.apiSubscription) this.apiSubscription.unsubscribe();
     }
 }

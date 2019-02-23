@@ -9,10 +9,11 @@ import { LastTransactionComponent } from './pages/last-transaction/last-transact
 import { TransactionComponent } from './pages/transaction/transaction.component';
 import { SharedModule } from '../shared/shared.module';
 import { RecipientAutocompleteService } from './services/recipient-autocomplete.service';
+import { TransactionStorageService } from './services/transaction-storage.service';
 
 @NgModule({
     declarations: [ TransactionComponent, LastTransactionComponent, HistoryComponent ],
     imports: [ CommonModule, FormsModule, BrowserAnimationsModule, ReactiveFormsModule, SharedModule, DigitOnlyModule ],
-    providers: [ RecipientAutocompleteService ]
+    providers: [ RecipientAutocompleteService, TransactionStorageService ]
 })
 export class TransactionModule {}

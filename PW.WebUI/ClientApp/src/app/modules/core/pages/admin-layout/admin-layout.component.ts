@@ -16,6 +16,7 @@ import { tap } from 'rxjs/operators';
 export class AdminLayoutComponent implements OnInit, OnDestroy {
     name: string;
     titleChangedSubscription: Subscription;
+    balanceChangedSubscription: Subscription;
 
     constructor(
         private router: Router,
@@ -36,7 +37,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
         );
         this.headerService.getUserTitle();
 
-        this.transactionApiService
+        this.balanceChangedSubscription = this.transactionApiService
             .getBalance()
             .pipe(tap((result: any) => this.accountService.setBalance(result.balance)))
             .subscribe();
@@ -49,6 +50,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        if (this.titleChangedSubscription) this.titleChangedSubscription.unsubscribe();
+        this.titleChangedSubscription.unsubscribe();
+        this.balanceChangedSubscription.unsubscribe();
     }
 }

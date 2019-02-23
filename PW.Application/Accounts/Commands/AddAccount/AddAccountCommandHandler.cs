@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PW.Application.Accounts.Commands.AddAccount
 {
-    public class AddAccountCommandHandler : IRequestHandler<AddAccountCommand, Unit>
+    public class AddAccountCommandHandler : IRequestHandler<AddAccountCommand, Guid>
     {
         private readonly ApplicationDbContext _context;
 
@@ -16,15 +16,16 @@ namespace PW.Application.Accounts.Commands.AddAccount
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddAccountCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(AddAccountCommand request, CancellationToken cancellationToken)
         {
             var accountId = Guid.NewGuid();
-            await _context.Accounts.AddAsync(new Account
+            var account = new Account
             {
                 Id = accountId,
                 Name = request.Name,
                 UserId = request.UserId
-            });
+            };
+            await _context.Accounts.AddAsync(account);
             await _context.AccountTransactions.AddAsync(new AccountTransaction
             {
                 CreditAccountId = AccountConst.SystemAccountGuid,
@@ -33,7 +34,7 @@ namespace PW.Application.Accounts.Commands.AddAccount
                 TransactionDate = DateTime.UtcNow
             });
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return account.Id;
         }
     }
 }

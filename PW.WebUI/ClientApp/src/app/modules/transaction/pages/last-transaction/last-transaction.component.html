@@ -35,7 +35,7 @@
 
     <ng-container matColumnDef="repeatTransaction">
         <mat-header-cell *matHeaderCellDef>Repeat Transaction</mat-header-cell>
-        <mat-cell *matCellDef="let transaction"><button mat-raised-button color="primary" *ngIf="transaction.amount<0">Repeat</button></mat-cell>
+        <mat-cell *matCellDef="let transaction"><button mat-raised-button color="primary" (click)="repeat(transaction)" *ngIf="transaction.amount<0">Repeat</button></mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

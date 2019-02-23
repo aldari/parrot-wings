@@ -1,21 +1,23 @@
-import { FormBuilder, FormGroup, Validators, FormGroupDirective, ValidatorFn } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { UserService } from './user.service';
 import { User } from './user.model';
 import { CustomValidators } from '../../../shared/valid';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
     styleUrls: [ './register.component.css' ]
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
     loaderFlag: boolean;
     registrationForm: FormGroup;
     errMsg: string;
     @ViewChild(FormGroupDirective) registerForm;
+    apiSubscription: Subscription;
 
     constructor(private userService: UserService, public snackBar: MatSnackBar, private fb: FormBuilder) {}
 
@@ -43,7 +45,7 @@ export class RegisterComponent implements OnInit {
 
         this.loaderFlag = true;
         this.errMsg = '';
-        this.userService.register(user).subscribe(
+        this.apiSubscription = this.userService.register(user).subscribe(
             () => {
                 this.loaderFlag = false;
                 this.snackBar.open('User has registered');
@@ -54,5 +56,9 @@ export class RegisterComponent implements OnInit {
                 this.errMsg = error[''];
             }
         );
+    }
+
+    ngOnDestroy() {
+      if (this.apiSubscription) this.apiSubscription.unsubscribe();
     }
 }
