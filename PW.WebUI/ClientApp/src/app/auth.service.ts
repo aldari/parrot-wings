@@ -13,7 +13,7 @@ export class AuthService {
     constructor(private http: HttpClient, private router: Router) {}
 
     login(email: string, password: string): any {
-        const url = environment.apiUrl + '/api/auth/login';
+        const url = environment.apiUrl + '/api/auth/token';
         const data = {
             email: email,
             password: password,

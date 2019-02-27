@@ -15,7 +15,7 @@ export class UserService {
     }
 
     register(user: User): Observable<any> {
-        const url = environment.apiUrl + '/api/register';
+        const url = environment.apiUrl + '/api/auth';
         return this.http.post(url, JSON.stringify(user), this.getRequestOptions()).pipe(catchError(this.handleError));
     }
 

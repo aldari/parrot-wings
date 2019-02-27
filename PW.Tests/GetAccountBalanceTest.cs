@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NFluent;
 using NUnit.Framework;
 using PW.Application.Accounts.Commands.AddAccount;
 using PW.Application.Accounts.Commands.AddTransaction;
@@ -8,15 +9,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PW.Tests
+namespace PW.Application.Tests.Integration
 {
     [TestFixture]
-    public class GetAccountBalanceTest : IDisposable
+    public class AccountBalanceQueryHandlerTest : IDisposable
     {
         private readonly ApplicationDbContext _context;
         private readonly string _databaseName;
 
-        public GetAccountBalanceTest()
+        public AccountBalanceQueryHandlerTest()
         {
             _databaseName = Guid.NewGuid().ToString();
 
@@ -29,22 +30,24 @@ namespace PW.Tests
         }
 
         [Test]
-        public async Task GetAccountBalanceQuery_Returns_InitialBalanceEqual500()
+        public async Task Handle_Returns500_ForInitialBalance()
         {
+            // Arrange
             var ivanAccountCommand = new AddAccountCommand { UserId = Guid.NewGuid(), Name = "Ivan" };
             var ivanAccountId = await new AddAccountCommandHandler(_context).Handle(ivanAccountCommand, CancellationToken.None);
 
-
+            // Act
             var handler = new AccountBalanceQueryHandler(_context);
             var balance = await handler.Handle(new AccountBalanceQuery {AccountId = ivanAccountId }, CancellationToken.None);
 
-
-            Assert.AreEqual(500, balance.Balance);
+            // Assert
+            Check.That(500).Equals(balance.Balance);
         }
 
         [Test]
-        public async Task BalanceIncreasingAfterSendingToThisAccount()
+        public async Task Handle_BalanceIncreasing_AfterSendingToThisAccount()
         {
+            // Arrange
             var ivanAccountCommand = new AddAccountCommand { UserId = Guid.NewGuid(), Name = "Ivan" };
             var ivanAccountId = await new AddAccountCommandHandler(_context).Handle(ivanAccountCommand, CancellationToken.None);
 
@@ -54,17 +57,18 @@ namespace PW.Tests
             var transaction = new AddTransactionCommand { Amount = 11, CreditAccount = petrAccountId, DebitAccount = ivanAccountId };
             await new AddTransactionCommandHandler(_context).Handle(transaction, CancellationToken.None);
 
-
+            // Act
             var handler = new AccountBalanceQueryHandler(_context);
             var balance = await handler.Handle(new AccountBalanceQuery { AccountId = ivanAccountId }, CancellationToken.None);
 
-
-            Assert.AreEqual(511, balance.Balance);
+            // Assert
+            Check.That(511).Equals(balance.Balance);
         }
 
         [Test]
-        public async Task BalanceDecreasingAfterSendingFromThisAccount()
+        public async Task Handle_BalanceDecreasing_AfterSendingFromThisAccount()
         {
+            // Arrange
             var ivanAccountCommand = new AddAccountCommand { UserId = Guid.NewGuid(), Name = "Ivan" };
             var ivanAccountId = await new AddAccountCommandHandler(_context).Handle(ivanAccountCommand, CancellationToken.None);
 
@@ -74,12 +78,12 @@ namespace PW.Tests
             var transaction = new AddTransactionCommand { Amount = 13, CreditAccount = ivanAccountId, DebitAccount = petrAccountId };
             await new AddTransactionCommandHandler(_context).Handle(transaction, CancellationToken.None);
 
-
+            // Act
             var handler = new AccountBalanceQueryHandler(_context);
             var balance = await handler.Handle(new AccountBalanceQuery { AccountId = ivanAccountId }, CancellationToken.None);
 
-
-            Assert.AreEqual(487, balance.Balance);
+            // Assert
+            Check.That(487).Equals(balance.Balance);
         }
 
         public void Dispose()

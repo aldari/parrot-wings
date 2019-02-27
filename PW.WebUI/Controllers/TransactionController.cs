@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PW.Application.Accounts.Commands.AddTransaction;
+using PW.Application.Accounts.Queries.GetAccountBalance;
 using PW.Application.Accounts.Queries.GetAccountLastTransactions;
 using PW.Application.Accounts.Queries.GetAccountTransactions;
 using PW.Models;
@@ -52,6 +53,14 @@ namespace PW.Api.Controllers
                 return Ok();
             }
             return BadRequest(result);
+        }
+
+        [HttpGet("balance")]
+        [Authorize]
+        public async Task<OkObjectResult> GetUserBalance()
+        {
+            var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
+            return Ok(await _mediator.Send(new AccountBalanceQuery { AccountId = accountId }));
         }
     }
 }

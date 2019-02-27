@@ -117,6 +117,7 @@ namespace PW.Application.Accounts.Queries.GetAccountTransactions
                                        equals acc.Id
                                        select new FilteredTransactionDto
                                        {
+                                           Id = t.Id,
                                            Amount = t.Amount,
                                            TransactionDate = t.TransactionDate,
                                            CorrespondentId = (t.CreditAccountId == request.AccountId) ? t.DebitAccountId : t.CreditAccountId,
