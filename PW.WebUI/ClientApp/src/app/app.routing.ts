@@ -7,6 +7,7 @@ import { TransactionComponent } from './modules/transaction/pages/transaction/tr
 import { LastTransactionComponent } from './modules/transaction/pages/last-transaction/last-transaction.component';
 import { HistoryComponent } from './modules/transaction/pages/history/history.component';
 import { AuthGuard } from './modules/shared/guards/auth-guard.service';
+import { BalanceResolverService } from './modules/transaction/services/balance-resolver.service';
 
 const appRoutes: Routes = [
     {
@@ -20,7 +21,8 @@ const appRoutes: Routes = [
                 canActivate: [ AuthGuard ]
             },
             { path: 'history', component: HistoryComponent, canActivate: [ AuthGuard ] }
-        ]
+        ],
+        resolve: { balanceData: BalanceResolverService }
     },
     {
         path: '**',

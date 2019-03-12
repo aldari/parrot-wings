@@ -6,7 +6,6 @@ import { registerLocaleData } from '@angular/common';
 
 import { AuthService } from '../../auth.service';
 import { UserService } from '../auth/register/user.service';
-import { HeaderService } from './header.service';
 import { RequestInterceptorService } from '../../request-interceptor.service';
 
 import { AdminLayoutComponent } from './pages/admin-layout/admin-layout.component';
@@ -15,7 +14,7 @@ import { SharedModule } from '../shared/shared.module';
 import { AppRoutingModule } from '../../app.routing';
 import { AccountBalanceService } from './account-balance.service';
 import { TransactionApiService } from '../transaction/services/transaction-api.service';
-import { UserDataSource } from '../transaction/services/transaction-data-source.service';
+import { HeaderService } from './header.service';
 
 registerLocaleData(localeRu);
 

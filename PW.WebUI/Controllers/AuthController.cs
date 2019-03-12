@@ -135,7 +135,7 @@ namespace PW.Controllers
                 return errorResult;
             }
 
-            return Ok(new { user.Email, user.UserName });
+            return Ok(new { user.Email });
         }
 
         private IActionResult GetErrorResult(IdentityResult result)

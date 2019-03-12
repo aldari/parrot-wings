@@ -5,7 +5,6 @@ import { TransactionApiService } from '../../services/transaction-api.service';
 import { UserDataSource } from '../../services/transaction-data-source.service';
 import { LastTranasctionItem } from '../../models/last-transaction-item.model';
 import { TransactionStorageService } from '../../services/transaction-storage.service';
-import { Transaction } from '../transaction/transaction.model';
 
 @Component({
     selector: 'app-last-transaction',
@@ -27,10 +26,10 @@ export class LastTransactionComponent implements OnInit {
     }
 
     public repeat(transaction: LastTranasctionItem) {
-        const pass = new Transaction();
-        pass.amount = transaction.amount;
-        pass.recipient = transaction.accountId;
-        this.transactionStorageService.transaction = pass;
+        this.transactionStorageService.hasValue = true;
+        this.transactionStorageService.recipientId = transaction.accountId;
+        this.transactionStorageService.recipientName = transaction.accountName;
+        this.transactionStorageService.amount = transaction.amount;
         this.router.navigate([ '/' ]);
     }
 }

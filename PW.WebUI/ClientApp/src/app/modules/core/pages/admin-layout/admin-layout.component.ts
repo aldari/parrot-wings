@@ -1,12 +1,10 @@
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../../../../auth.service';
-import { HeaderService } from '../../header.service';
 import { AccountBalanceService } from '../../account-balance.service';
-import { TransactionApiService } from '../../../transaction/services/transaction-api.service';
-import { tap } from 'rxjs/operators';
+import { HeaderService } from '../../header.service';
 
 @Component({
     selector: 'app-admin-layout',
@@ -15,18 +13,19 @@ import { tap } from 'rxjs/operators';
 })
 export class AdminLayoutComponent implements OnInit, OnDestroy {
     name: string;
-    titleChangedSubscription: Subscription;
     balanceChangedSubscription: Subscription;
+    titleChangedSubscription: Subscription;
 
     constructor(
         private router: Router,
+        private route: ActivatedRoute,
         private authService: AuthService,
         private headerService: HeaderService,
-        public accountService: AccountBalanceService,
-        private transactionApiService: TransactionApiService
+        public accountBalanceService: AccountBalanceService
     ) {}
 
     ngOnInit() {
+        this.accountBalanceService.setBalance(this.route.snapshot.data.balanceData.balance);
         this.titleChangedSubscription = this.headerService.userTitleChanged$.subscribe(
             (name) => {
                 this.name = name;
@@ -36,11 +35,6 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
             }
         );
         this.headerService.getUserTitle();
-
-        this.balanceChangedSubscription = this.transactionApiService
-            .getBalance()
-            .pipe(tap((result: any) => this.accountService.setBalance(result.balance)))
-            .subscribe();
     }
 
     logout() {
@@ -51,6 +45,5 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.titleChangedSubscription.unsubscribe();
-        this.balanceChangedSubscription.unsubscribe();
     }
 }

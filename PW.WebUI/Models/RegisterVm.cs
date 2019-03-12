@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PW.Models
 {
@@ -13,5 +14,10 @@ namespace PW.Models
 
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        [Compare("Password")]
+        [NotMapped]
+        public string ConfirmPassword { get; set; }
     }
 }

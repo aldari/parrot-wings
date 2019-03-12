@@ -40,6 +40,10 @@ namespace PW.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> AddTransactionAsync([FromBody] TransactionModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var accountId = Guid.Parse(User.FindFirst("AccountId").Value);
             var command = new AddTransactionCommand
             {

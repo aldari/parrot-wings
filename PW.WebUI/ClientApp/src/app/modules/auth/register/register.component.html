@@ -36,8 +36,8 @@
 
                 <mat-form-field>
                     <mat-icon matPrefix>lock</mat-icon>
-                    <input matInput type="password" formControlName="passwordConfirm" placeholder=" Confirm Password" autocomplete="off">
-                    <mat-error *ngIf="registrationForm.get('passwordConfirm').hasError('required')">
+                    <input matInput type="password" formControlName="confirmPassword" placeholder=" Confirm Password" autocomplete="off">
+                    <mat-error *ngIf="registrationForm.get('confirmPassword').hasError('required')">
                         Password Confirmation is <strong>required</strong>
                     </mat-error>
                     <!-- <mat-error *ngIf="registrationForm.errors?.mismatch">

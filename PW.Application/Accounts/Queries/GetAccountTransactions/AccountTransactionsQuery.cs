@@ -18,6 +18,7 @@ namespace PW.Application.Accounts.Queries.GetAccountTransactions
         public AccountTransactionsQuery()
         {
             SortOrder = "asc";
+            SortColumn = "transactionDate";
             PageIndex = 0;
             PageSize = 3;
         }

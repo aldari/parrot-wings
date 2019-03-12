@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Transaction } from '../pages/transaction/transaction.model';
 
 @Injectable()
 export class TransactionStorageService {
-    public transaction: Transaction;
+    public recipientId: string;
+    public recipientName: string;
+    public amount: number;
+    public hasValue = false;
+
+    TransactionStorageService() {}
 }

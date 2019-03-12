@@ -42,11 +42,12 @@ export class LoginComponent implements OnInit, OnDestroy {
             },
             (err) => {
                 this.loginError = true;
+                console.log(err);
             }
         );
     }
 
     ngOnDestroy(): void {
-      if (this.apiSubscription) this.apiSubscription.unsubscribe();
+        if (this.apiSubscription) this.apiSubscription.unsubscribe();
     }
 }

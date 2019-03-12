@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { UserService } from './user.service';
 import { User } from './user.model';
-import { CustomValidators } from '../../../shared/valid';
+import { CustomValidators } from '../../shared/valid';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -27,9 +27,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
                 fullName: [ '', [ Validators.required ] ],
                 email: [ '', [ Validators.required, Validators.email ] ],
                 password: [ '', [ Validators.required ] ],
-                passwordConfirm: [ '', [ Validators.required ] ]
-            },
-            { validator: CustomValidators.passwordMatchValidator }
+                confirmPassword: [ '', [ Validators.required ] ]
+            } //,
+            // { validator: CustomValidators.passwordMatchValidator }
         );
     }
 
@@ -42,6 +42,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         user.fullName = this.registrationForm.value.fullName;
         user.email = this.registrationForm.value.email;
         user.password = this.registrationForm.value.password;
+        user.confirmPassword = this.registrationForm.value.confirmPassword;
 
         this.loaderFlag = true;
         this.errMsg = '';
@@ -59,6 +60,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-      if (this.apiSubscription) this.apiSubscription.unsubscribe();
+        if (this.apiSubscription) this.apiSubscription.unsubscribe();
     }
 }

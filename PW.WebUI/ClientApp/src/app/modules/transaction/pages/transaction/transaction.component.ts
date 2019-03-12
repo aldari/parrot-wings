@@ -9,6 +9,7 @@ import { forceOptionValidator } from './forceOptionValidator';
 import { AccountBalanceService } from '../../../core/account-balance.service';
 import { RecipientAutocompleteService } from '../../services/recipient-autocomplete.service';
 import { TransactionApiService } from '../../services/transaction-api.service';
+import { TransactionStorageService } from '../../services/transaction-storage.service';
 
 @Component({
     selector: 'app-transaction',
@@ -27,7 +28,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
         private transactionApiService: TransactionApiService,
         private fb: FormBuilder,
         public snackBar: MatSnackBar,
-        public accountBalanceService: AccountBalanceService
+        public accountBalanceService: AccountBalanceService,
+        private transactionStorageService: TransactionStorageService
     ) {}
 
     spinnerButtonOptions: ButtonOpts = {
@@ -51,6 +53,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
         const searchString$ = this.transactionForm.get('recipient').valueChanges;
         this.filteredData$ = this.recipientAutocompleteService.getRecipientListAfterAutocompleteEdit(searchString$);
+
+        if (this.transactionStorageService.hasValue) {
+        }
     }
 
     save() {

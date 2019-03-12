@@ -1,5 +1,5 @@
 import { throwError, Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
@@ -87,8 +87,8 @@ export class TransactionApiService {
         );
     }
 
-    getBalance(): Observable<number> {
-        return this.http.get<number>(this.baseUrl + 'register/balance', this.getRequestOptions()).pipe(
+    getBalance(): Observable<any> {
+        return this.http.get<any>(this.baseUrl + 'transaction/balance', this.getRequestOptions()).pipe(
             catchError((error) => {
                 return throwError(error.error || 'Server error');
             })
