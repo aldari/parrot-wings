@@ -34,8 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PW.Application\PW.Application.csproj" />
-    <ProjectReference Include="..\PW.Core\PW.Core.csproj" />
-    <ProjectReference Include="..\PW.DataAccess\PW.DataAccess.csproj" />
     <ProjectReference Include="..\PW.Persistence\PW.Persistence.csproj" />
   </ItemGroup>
 

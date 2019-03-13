@@ -32,17 +32,20 @@
                     <mat-error *ngIf="registrationForm.get('password').hasError('required')">
                         Password is <strong>required</strong>
                     </mat-error>
+                    <mat-error *ngIf="registrationForm.get('password').hasError('minlength')">
+                        Passwords must be at least 6 characters
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field>
                     <mat-icon matPrefix>lock</mat-icon>
-                    <input matInput type="password" formControlName="confirmPassword" placeholder=" Confirm Password" autocomplete="off">
+                    <input matInput type="password" formControlName="confirmPassword" placeholder=" Confirm Password" autocomplete="off" [errorStateMatcher]="errorMatcher">
                     <mat-error *ngIf="registrationForm.get('confirmPassword').hasError('required')">
                         Password Confirmation is <strong>required</strong>
                     </mat-error>
-                    <!-- <mat-error *ngIf="registrationForm.errors?.mismatch">
-                        Password Confirmation does not match Password
-                    </mat-error> -->
+                    <mat-error *ngIf="registrationForm.hasError('passwordsDoNotMatch')">
+                        Passwords do not match!
+                    </mat-error>
                 </mat-form-field>
 
                 <div class="error">{{errMsg}}</div>

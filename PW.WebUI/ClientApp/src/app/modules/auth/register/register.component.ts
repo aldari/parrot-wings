@@ -1,11 +1,11 @@
-import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormGroupDirective } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { UserService } from './user.service';
 import { User } from './user.model';
-import { CustomValidators } from '../../shared/valid';
-import { Subscription } from 'rxjs';
+import { CrossFieldErrorMatcher } from './cross-field-error-matcher';
 
 @Component({
     selector: 'app-register',
@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     errMsg: string;
     @ViewChild(FormGroupDirective) registerForm;
     apiSubscription: Subscription;
+    public errorMatcher = new CrossFieldErrorMatcher();
 
     constructor(private userService: UserService, public snackBar: MatSnackBar, private fb: FormBuilder) {}
 
@@ -26,10 +27,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
             {
                 fullName: [ '', [ Validators.required ] ],
                 email: [ '', [ Validators.required, Validators.email ] ],
-                password: [ '', [ Validators.required ] ],
+                password: [ '', [ Validators.required, Validators.minLength(6) ] ],
                 confirmPassword: [ '', [ Validators.required ] ]
-            } //,
-            // { validator: CustomValidators.passwordMatchValidator }
+            },
+            { validator: this.passwordValidator }
         );
     }
 
@@ -57,6 +58,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
                 this.errMsg = error[''];
             }
         );
+    }
+
+    passwordValidator(form: FormGroup) {
+        const condition = form.get('password').value !== form.get('confirmPassword').value;
+
+        return condition ? { passwordsDoNotMatch: true } : null;
     }
 
     ngOnDestroy() {

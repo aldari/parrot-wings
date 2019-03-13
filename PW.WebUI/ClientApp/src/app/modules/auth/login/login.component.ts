@@ -23,9 +23,9 @@ export class LoginComponent implements OnInit, OnDestroy {
             email: [ '', [ Validators.required, Validators.email ] ],
             password: [ '', [ Validators.required ] ]
         });
-        if (this.authService.isLoggedIn()) {
-            this.router.navigate([ '/' ]);
-        }
+        // if (this.authService.isLoggedIn()) {
+        //     this.router.navigate([ '/' ]);
+        // }
     }
 
     login() {
