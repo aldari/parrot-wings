@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Dev\PW\next\PW\PW\PW.WebUI.xml</DocumentationFile>
+    <DocumentationFile>C:\Dev\PW\next\PW\PW.WebUI\PW.WebUI.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

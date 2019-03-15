@@ -57,7 +57,7 @@ namespace PW.Application.Accounts.Queries.GetAccountLastTransactions
                         Amount = reader.GetInt32(0),
                         AccountId = reader.GetGuid(1),
                         AccountName = reader.GetString(2),
-                        TransactionDate = reader.GetDateTime(3),
+                        TransactionDate = reader.GetDateTime(3).MarkUnspecifiedDateAsUtc(),
                         AccumulateSum = reader.GetInt32(4),
                         Id = reader.GetInt32(5)
                     });

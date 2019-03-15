@@ -10,8 +10,8 @@ using PW.Persistence;
 namespace PW.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190212160622_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190315082257_transactions")]
+    partial class transactions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

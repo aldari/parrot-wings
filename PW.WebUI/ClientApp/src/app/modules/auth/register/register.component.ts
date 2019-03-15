@@ -51,7 +51,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             () => {
                 this.loaderFlag = false;
                 this.snackBar.open('User has registered');
-                this.registerForm.reset(this.registerForm.value);
+                this.registerForm.resetForm();
             },
             (error) => {
                 this.loaderFlag = false;

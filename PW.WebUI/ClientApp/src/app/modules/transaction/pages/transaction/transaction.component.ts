@@ -9,27 +9,24 @@ import { forceOptionValidator } from './forceOptionValidator';
 import { AccountBalanceService } from '../../../core/account-balance.service';
 import { RecipientAutocompleteService } from '../../services/recipient-autocomplete.service';
 import { TransactionApiService } from '../../services/transaction-api.service';
-import { TransactionStorageService } from '../../services/transaction-storage.service';
 
 @Component({
     selector: 'app-transaction',
     templateUrl: './transaction.component.html',
     styleUrls: [ './transaction.component.css' ]
 })
-export class TransactionComponent implements OnInit, OnDestroy {
+export class TransactionComponent implements OnInit {
     filteredData$: Observable<any>;
     transactionForm: FormGroup;
     @ViewChild(FormGroupDirective) myForm;
     errMsg: string;
-    apiSubscription: Subscription;
 
     constructor(
         private recipientAutocompleteService: RecipientAutocompleteService,
         private transactionApiService: TransactionApiService,
         private fb: FormBuilder,
         public snackBar: MatSnackBar,
-        public accountBalanceService: AccountBalanceService,
-        private transactionStorageService: TransactionStorageService
+        public accountBalanceService: AccountBalanceService
     ) {}
 
     spinnerButtonOptions: ButtonOpts = {
@@ -53,9 +50,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
         const searchString$ = this.transactionForm.get('recipient').valueChanges;
         this.filteredData$ = this.recipientAutocompleteService.getRecipientListAfterAutocompleteEdit(searchString$);
-
-        if (this.transactionStorageService.hasValue) {
-        }
     }
 
     save() {
@@ -71,7 +65,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
         transaction.amount = this.transactionForm.value['amount'];
         transaction.recipient = this.transactionForm.value['recipient']['id'];
 
-        this.apiSubscription = this.transactionApiService.addTransaction(transaction).subscribe(
+        this.transactionApiService.addTransaction(transaction).subscribe(
             () => {
                 this.myForm.resetForm();
                 this.accountBalanceService.reduce(transaction.amount);
@@ -91,9 +85,5 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
     displayFn(recipient?: any): string | undefined {
         return recipient ? recipient.name : undefined;
-    }
-
-    ngOnDestroy() {
-        if (this.apiSubscription) this.apiSubscription.unsubscribe();
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PW.Persistence.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class transactions : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
