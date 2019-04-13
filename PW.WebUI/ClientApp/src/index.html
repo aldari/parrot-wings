@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>ParrotWings</title>
@@ -8,61 +9,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Favicon-->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  
+
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body class="theme-teal">
-    <app-root>
-      <style>
-        app-root {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-      
-          color: #009688;
-          text-transform: uppercase;
-          font-family: -apple-system,
-              BlinkMacSystemFont,
-              "Segoe UI",
-              Roboto,
-              Oxygen-Sans,
-              Ubuntu,
-              Cantarell,
-              Helvetica,
-              sans-serif;
-          font-size: 2.5em;
-          text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+
+<body>
+  <app-root>
+    <style>
+      app-root {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+
+        color: #009688;
+        text-transform: uppercase;
+        font-family: -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen-Sans,
+          Ubuntu,
+          Cantarell,
+          Helvetica,
+          sans-serif;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      body {
+        background-color: #e9e9e9;
+        margin: 0;
+        padding: 0;
+      }
+
+      @keyframes dots {
+        50% {
+          transform: translateY(-.4rem);
         }
-        body {
-          background-color: #e9e9e9;
-          margin: 0;
-          padding: 0;
+
+        100% {
+          transform: translateY(0);
         }
-      
-        @keyframes dots {
-          50% {
-            transform: translateY(-.4rem);
-          }
-          100% {
-            transform: translateY(0);
-          }
-        }
-      
-        .d {
-          animation: dots 1.5s ease-out infinite;
-        }
-        .d-2 {
-          animation-delay: .5s;
-        }
-        .d-3 {
-          animation-delay: 1s;
-        }
-        </style>
-      
-        Loading<span class="d">.</span><span class="d d-2">.</span><span class="d d-3">.</span>
-    </app-root>
+      }
+
+      .d {
+        animation: dots 1.5s ease-out infinite;
+      }
+
+      .d-2 {
+        animation-delay: .5s;
+      }
+
+      .d-3 {
+        animation-delay: 1s;
+      }
+    </style>
+
+    Loading<span class="d">.</span><span class="d d-2">.</span><span class="d d-3">.</span>
+  </app-root>
 </body>
+
 </html>

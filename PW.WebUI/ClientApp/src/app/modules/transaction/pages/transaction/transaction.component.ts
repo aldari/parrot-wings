@@ -1,8 +1,8 @@
-import { Observable, Subscription } from 'rxjs';
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormGroupDirective } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
-import { ButtonOpts } from 'mat-progress-buttons';
+import { MatProgressButtonOptions } from 'mat-progress-buttons';
 
 import { Transaction } from './transaction.model';
 import { forceOptionValidator } from './forceOptionValidator';
@@ -29,7 +29,7 @@ export class TransactionComponent implements OnInit {
         public accountBalanceService: AccountBalanceService
     ) {}
 
-    spinnerButtonOptions: ButtonOpts = {
+    spinnerButtonOptions: MatProgressButtonOptions = {
         active: false,
         text: 'Add Transacton',
         spinnerSize: 18,

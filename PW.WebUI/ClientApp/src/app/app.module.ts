@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
@@ -22,7 +23,8 @@ import { AppRoutingModule } from './app.routing';
         AuthModule,
         TransactionModule,
         AppRoutingModule,
-        CoreModule
+        CoreModule,
+        FlexLayoutModule
     ],
     providers: [],
     bootstrap: [ AppComponent ]

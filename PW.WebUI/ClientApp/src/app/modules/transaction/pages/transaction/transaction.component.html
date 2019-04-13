@@ -1,8 +1,10 @@
-<div class="row clearfix">
-  <div>
-    <h1>Adding Transaction</h1>
-    <div class="card">
-      <div class="body">
+<div class="container">
+  <div fxLayout="row" fxLayoutAlign="center center" class="content">
+    <mat-card class="card">
+      <mat-card-title fxLayout.gt-xs="row" fxLayout.xs="column">
+        <h3>Adding Transaction</h3>
+      </mat-card-title>
+      <mat-card-content>
         <form novalidate [formGroup]="transactionForm" (ngSubmit)="save()">
           <mat-form-field>
             <input matInput type="text" formControlName="amount" placeholder="Amount" digitOnly>
@@ -30,10 +32,10 @@
           <div class="error">{{errMsg}}</div>
 
           <div class="m-t-10">
-            <spinner-button [options]="spinnerButtonOptions" (onClick)="save()"></spinner-button>
+            <mat-spinner-button [options]="spinnerButtonOptions" (onClick)="save()"></mat-spinner-button>
           </div>
         </form>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
