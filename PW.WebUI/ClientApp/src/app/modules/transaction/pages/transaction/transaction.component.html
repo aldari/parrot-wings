@@ -1,41 +1,39 @@
-<div class="container">
-  <div fxLayout="row" fxLayoutAlign="center center" class="content">
-    <mat-card class="card">
-      <mat-card-title fxLayout.gt-xs="row" fxLayout.xs="column">
-        <h3>Adding Transaction</h3>
-      </mat-card-title>
-      <mat-card-content>
-        <form novalidate [formGroup]="transactionForm" (ngSubmit)="save()">
-          <mat-form-field>
-            <input matInput type="text" formControlName="amount" placeholder="Amount" digitOnly>
-            <mat-error *ngIf="transactionForm.get('amount').hasError('required')">
-              Amount is <strong>required</strong>
-            </mat-error>
-            <mat-error *ngIf="transactionForm.get('amount').hasError('min')">
-              Enter Amount greater then 0
-            </mat-error>
-          </mat-form-field>
+<div>
+  <h1>Adding Transaction</h1>
+  <mat-card>
+    <mat-card-content>
+      <form novalidate [formGroup]="transactionForm" (ngSubmit)="save()" fxLayout="column">
+        <mat-form-field>
+          <input matInput type="text" formControlName="amount" placeholder="Amount" digitOnly>
+          <mat-error *ngIf="transactionForm.get('amount').hasError('required')">
+            Amount is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="transactionForm.get('amount').hasError('min')">
+            Enter Amount greater then 0
+          </mat-error>
+        </mat-form-field>
 
-          <mat-form-field>
-            <input matInput type="text" formControlName="recipient" placeholder="Recipient" [matAutocomplete]="auto" >
-            <mat-error *ngIf="transactionForm.hasError('forceOptionValidator', ['recipient'])">
-              Select a recipient
-            </mat-error>
-          </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" formControlName="recipient" placeholder="Recipient" [matAutocomplete]="auto" >
+          <mat-error *ngIf="transactionForm.hasError('forceOptionValidator', ['recipient'])">
+            Select a recipient
+          </mat-error>
+        </mat-form-field>
 
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-            <mat-option *ngFor="let recipient of (filteredData$ | async)" [value]="recipient">
-              {{ recipient.name }}
-            </mat-option>
-          </mat-autocomplete>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let recipient of (filteredData$ | async)" [value]="recipient">
+            {{ recipient.name }}
+          </mat-option>
+        </mat-autocomplete>
 
-          <div class="error">{{errMsg}}</div>
+        <div class="error">{{errMsg}}</div>
 
-          <div class="m-t-10">
-            <mat-spinner-button [options]="spinnerButtonOptions" (onClick)="save()"></mat-spinner-button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        <div align="end">
+          <mat-spinner-button [options]="spinnerButtonOptions" (onClick)="save()"></mat-spinner-button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
+
+

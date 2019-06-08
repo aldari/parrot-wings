@@ -3,7 +3,6 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import localeRu from '@angular/common/locales/ru';
 import { registerLocaleData } from '@angular/common';
-import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AuthService } from '../../auth.service';
 import { UserService } from '../auth/register/user.service';
@@ -21,7 +20,7 @@ registerLocaleData(localeRu);
 
 @NgModule({
     declarations: [ AdminLayoutComponent, PageNotFoundComponent ],
-    imports: [ SharedModule, AppRoutingModule, FlexLayoutModule ],
+    imports: [ SharedModule, AppRoutingModule ],
     exports: [ AppRoutingModule ],
     providers: [
         AuthService,

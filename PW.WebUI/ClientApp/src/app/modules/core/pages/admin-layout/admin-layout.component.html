@@ -1,41 +1,3 @@
-<!--<div class="overlay"></div>
-
-<nav class="navbar">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
-            <a href="javascript:void(0);" class="bars"></a>
-            <a class="navbar-brand" [routerLink]="['/']"><span>Parrot Wings</span></a>
-        </div>
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a [routerLink]="['/']">Transaction</a>
-                </li>
-                <li>
-                    <a [routerLink]="['/last-transaction']">Last Transactions</a>
-                </li>
-                <li>
-                    <a [routerLink]="['/history']">History</a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li ><a class="nav-link">{{ name }}, Account:{{this.accountBalanceService.balance$ | async }}</a></li>
-                <li ><a style="cursor: pointer;" (click)="logout()" class="nav-link logout">Log Out <i class="fa fa-sign-out"></i></a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<section>
-</section>
-
-<section class="content">
-    <div class="container">
-        <router-outlet></router-outlet>
-    </div>
-</section>-->
-
 <mat-sidenav-container>
   <mat-sidenav #sidenav role="navigation">
     <mat-nav-list>
@@ -73,22 +35,21 @@
         <ul fxLayout fxLayoutGap="20px" class="navigation-items">
           <li>
             <a routerLink="/">
-              <mat-icon class="icon">home</mat-icon>
+              <!-- <mat-icon class="icon">home</mat-icon> -->
               <span class="label">Transaction</span>
             </a>
           </li>
           <li>
             <a routerLink="/last-transaction">
-              <mat-icon class="icon">dashboard</mat-icon>
               <span class="label">Last Transactions</span>
             </a>
           </li>
           <li>
             <a routerLink="/history">
-              <mat-icon class="icon">dashboard</mat-icon>
               <span class="label">History</span>
             </a>
           </li>
+          <li><a class="nav-link">{{ name }}, Account:{{this.accountBalanceService.balance$ | async }}</a></li>
           <li>
             <a (click)="logout()" type="button">
               <mat-icon class="icon">input</mat-icon>

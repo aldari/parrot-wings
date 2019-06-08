@@ -25,6 +25,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AdminGuard } from './guards/admin-guard.service';
 import { AuthGuard } from './guards/auth-guard.service';
@@ -86,7 +87,8 @@ import { NumberDirective } from './directives/numbers-only.directive';
         NumberDirective,
         MatSidenavModule,
         MatToolbarModule,
-        MatListModule
+        MatListModule,
+        FlexLayoutModule
     ],
     providers: [ AdminGuard, AuthGuard ]
 })
