@@ -10,7 +10,7 @@ namespace PW.Controllers
 {
     [Authorize]
     [Route("api/recipient")]
-    public class RecipientController : Controller
+    public class RecipientController : ControllerBase
     {
         private readonly IMediator _mediator;
 

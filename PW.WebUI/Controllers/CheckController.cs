@@ -4,7 +4,7 @@ using System;
 namespace PW.WebUI.Controllers
 {
     [Route("api/check")]
-    public class CheckController : Controller
+    public class CheckController : ControllerBase
     {
         [HttpGet]
         public IActionResult Get()

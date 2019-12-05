@@ -13,7 +13,7 @@ namespace PW.Api.Controllers
 {
     [Authorize]
     [Route("api/transaction")]
-    public class TransactionController : Controller
+    public class TransactionController : ControllerBase
     {
         private readonly IMediator _mediator;
 
